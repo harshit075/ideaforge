@@ -74,7 +74,7 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
       cta: 'Transcribe YouTube Video',
       ctaAction: onOpenYoutube,
       accentText: '19 World Languages Ready',
-      image: '/images/editorial/hero-videosynth.jpg',
+      image: '/images/raksha/hero-web.png',
       badge: 'Global Video Intake',
     },
   };
@@ -131,7 +131,9 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
             <img
               src={current.image}
               alt={current.heading}
-              className="w-full h-full object-cover rounded-2xl transition-all duration-500"
+              className={`w-full h-full rounded-2xl transition-all duration-500 ${
+                activeMode === 'youtube' ? 'object-contain object-bottom' : 'object-cover'
+              }`}
             />
           </div>
 
