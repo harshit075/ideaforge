@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Copy,
   Check,
@@ -18,9 +18,15 @@ import {
   Monitor,
   CheckCircle2,
   FileText,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  Printer,
+  Code2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { BuildSpec } from '@/app/api/draft/route';
+import { ArchitectureVisualizer } from '@/components/ArchitectureVisualizer';
 
 interface SpecDisplayProps {
   spec: BuildSpec;
@@ -48,6 +54,37 @@ export const SpecDisplay: React.FC<SpecDisplayProps> = ({
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
   const [refinementInput, setRefinementInput] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Audio briefing via SpeechSynthesis
+  const toggleAudioBrief = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const briefText = `${spec.title}. ${spec.tagline}. The core problem being solved is: ${spec.problemStatement}. The suggested stack uses ${spec.techStack.frontend.join(', ')} on the front end, ${spec.techStack.backend.join(', ')} on the backend, and ${spec.techStack.aiAndApis.join(' with ')} for intelligence. Minimum viable product features include: ${spec.coreFeatures.mvp.slice(0, 3).join(', ')}.`;
+
+    const utterance = new SpeechSynthesisUtterance(briefText);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+    setIsSpeaking(true);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(spec.codingAgentPrompt);
@@ -59,6 +96,32 @@ export const SpecDisplay: React.FC<SpecDisplayProps> = ({
       colors: ['#E05315', '#F97316', '#1C1917', '#10B981'],
     });
     setTimeout(() => setCopiedPrompt(false), 2000);
+  };
+
+  const handleOpenInCursor = () => {
+    // Copy prompt first
+    navigator.clipboard.writeText(spec.codingAgentPrompt);
+    setCopiedPrompt(true);
+    // Deep-link to cursor
+    window.location.href = 'cursor://anysphere.cursor-composer';
+    setTimeout(() => setCopiedPrompt(false), 2000);
+  };
+
+  const handleOpenInV0 = () => {
+    const v0Url = `https://v0.dev/chat?prompt=${encodeURIComponent(spec.codingAgentPrompt.slice(0, 1500))}`;
+    window.open(v0Url, '_blank');
+  };
+
+  const handleCreateGitHubIssue = () => {
+    const body = encodeURIComponent(
+      `## Project: ${spec.title}\n\n> ${spec.tagline}\n\n### Problem\n${spec.problemStatement}\n\n### Stack\n- Frontend: ${spec.techStack.frontend.join(', ')}\n- Backend: ${spec.techStack.backend.join(', ')}\n- AI: ${spec.techStack.aiAndApis.join(', ')}\n\n### MVP Scope\n${spec.coreFeatures.mvp.map((f) => `- [ ] ${f}`).join('\n')}\n\n### Full Coding Prompt\n\`\`\`\n${spec.codingAgentPrompt}\n\`\`\``
+    );
+    const issueUrl = `https://github.com/new?title=${encodeURIComponent(`[RFC] ${spec.title}`)}&body=${body}`;
+    window.open(issueUrl, '_blank');
+  };
+
+  const handlePrintBrief = () => {
+    window.print();
   };
 
   const handleExportMarkdown = () => {
@@ -140,21 +203,58 @@ ${spec.codingAgentPrompt}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {/* Audio Voice Briefing */}
             <button
-              onClick={handleCopyPrompt}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow transition-all"
+              onClick={toggleAudioBrief}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold border transition-all ${
+                isSpeaking
+                  ? 'bg-[#E05315] text-white border-[#E05315] animate-pulse shadow-sm'
+                  : 'bg-white hover:bg-orange-50 text-[#E05315] border-orange-200'
+              }`}
+              title="Listen to Executive Audio Summary"
             >
-              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-orange-400" />}
-              <span>{copiedPrompt ? 'Prompt Copied!' : 'Copy Agent Prompt'}</span>
+              {isSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+              <span>{isSpeaking ? 'Stop Audio' : 'Hear Briefing'}</span>
             </button>
 
+            {/* Direct Open in Cursor IDE */}
+            <button
+              onClick={handleOpenInCursor}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white text-xs font-semibold shadow-sm transition-all"
+              title="Copy prompt & trigger Cursor Composer"
+            >
+              <Code2 className="w-3.5 h-3.5 text-orange-400" />
+              <span>Open in Cursor</span>
+            </button>
+
+            {/* Copy Agent Prompt */}
+            <button
+              onClick={handleCopyPrompt}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#FAF8F3] hover:bg-white text-[#1C1917] border border-[#EAE2D5] text-xs font-semibold transition-all shadow-sm"
+            >
+              {copiedPrompt ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[#E05315]" />}
+              <span>{copiedPrompt ? 'Copied!' : 'Copy Prompt'}</span>
+            </button>
+
+            {/* Export Markdown */}
             <button
               onClick={handleExportMarkdown}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-[#FAF8F3] text-[#44403C] border border-[#E5E0D8] hover:border-[#D4CDBF] text-xs sm:text-sm font-medium transition-all shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white hover:bg-[#FAF8F3] text-[#57534E] hover:text-[#1C1917] border border-[#E5E0D8] text-xs font-medium transition-all shadow-sm"
+              title="Download Markdown Spec"
             >
-              {copiedMarkdown ? <Check className="w-4 h-4 text-emerald-600" /> : <Download className="w-4 h-4 text-[#78716C]" />}
-              <span>Export .md</span>
+              {copiedMarkdown ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
+              <span>.md</span>
+            </button>
+
+            {/* Print / PDF Brief */}
+            <button
+              onClick={handlePrintBrief}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white hover:bg-[#FAF8F3] text-[#57534E] hover:text-[#1C1917] border border-[#E5E0D8] text-xs font-medium transition-all shadow-sm"
+              title="Print / Save as PDF Executive Brief"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>PDF</span>
             </button>
           </div>
         </div>
@@ -344,15 +444,16 @@ ${spec.codingAgentPrompt}
               </div>
             </div>
 
-            {/* Architecture Mermaid Graph */}
+            {/* Architecture Visualizer Diagram */}
             <div className="warm-card rounded-2xl p-6 shadow-sm space-y-3">
               <div className="flex items-center gap-2 border-b border-[#F5F2EC] pb-2">
                 <GitBranch className="w-4 h-4 text-[#E05315]" />
-                <h3 className="font-serif text-lg font-semibold text-[#1C1917]">Architecture Graph</h3>
+                <h3 className="font-serif text-lg font-semibold text-[#1C1917]">Architecture Diagram</h3>
               </div>
-              <pre className="p-3 bg-[#FAF8F3] rounded-xl border border-[#EAE2D5] font-mono text-[11px] text-[#1C1917] overflow-x-auto whitespace-pre leading-relaxed">
-                {spec.mermaidDiagram || `graph TD\n  User --> AssemblyAI\n  AssemblyAI --> Gemini\n  Gemini --> CodingPrompt`}
-              </pre>
+              <ArchitectureVisualizer
+                chart={spec.mermaidDiagram || `graph TD\n  Client[Next.js Client] --> Proxy[/api/transcribe]\n  Proxy --> Dictation[AssemblyAI Pro]\n  Proxy --> LLM[Gemini Spec Synthesizer]\n  LLM --> Code[Coding Agent Prompt]`}
+                title={spec.title}
+              />
             </div>
           </div>
         </div>
@@ -367,16 +468,39 @@ ${spec.codingAgentPrompt}
                 Ready-to-Paste Coding Agent Prompt
               </h3>
               <p className="text-xs text-[#57534E] mt-0.5">
-                Paste directly into Cursor, Antigravity IDE, or Claude Code to build this application.
+                Paste directly into Cursor, Antigravity IDE, Lovable, v0, or Claude Code.
               </p>
             </div>
-            <button
-              onClick={handleCopyPrompt}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white font-medium text-xs shadow-sm transition-all"
-            >
-              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-orange-400" />}
-              <span>{copiedPrompt ? 'Copied Prompt!' : 'Copy Full Prompt'}</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={handleOpenInCursor}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white font-semibold text-xs shadow-sm transition-all"
+              >
+                <Code2 className="w-3.5 h-3.5 text-orange-400" />
+                <span>Launch in Cursor</span>
+              </button>
+              <button
+                onClick={handleOpenInV0}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#FAF8F3] text-[#1C1917] border border-[#EAE2D5] font-semibold text-xs shadow-sm transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-[#E05315]" />
+                <span>Generate in v0</span>
+              </button>
+              <button
+                onClick={handleCreateGitHubIssue}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#FAF8F3] text-[#1C1917] border border-[#EAE2D5] font-semibold text-xs shadow-sm transition-all"
+              >
+                <GitBranch className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Create GitHub RFC</span>
+              </button>
+              <button
+                onClick={handleCopyPrompt}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E05315] hover:bg-[#C2410C] text-white font-medium text-xs shadow-sm transition-all"
+              >
+                {copiedPrompt ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedPrompt ? 'Copied!' : 'Copy Prompt'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="relative">
