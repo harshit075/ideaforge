@@ -44,7 +44,7 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
       cta: 'Talk to IdeaForge',
       ctaAction: onStartVoiceStudio,
       accentText: 'Multilingual Universal-3.5 Pro Live',
-      image: '/images/raksha/hero-call.png',
+      image: '/images/editorial/hero-architect.jpg',
       badge: 'Interactive Speech Intake',
     },
     team: {
@@ -59,7 +59,7 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
       cta: 'Open Zero-Drift Relay',
       ctaAction: onOpenZeroDrift,
       accentText: '0% Fact Drift Guaranteed',
-      image: '/images/raksha/hero-whatsapp.png',
+      image: '/images/editorial/hero-zerodrift.jpg',
       badge: 'Verified Team Relay',
     },
     youtube: {
@@ -74,7 +74,7 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
       cta: 'Transcribe YouTube Video',
       ctaAction: onOpenYoutube,
       accentText: '19 World Languages Ready',
-      image: '/images/raksha/hero-web.png',
+      image: '/images/editorial/hero-videosynth.jpg',
       badge: 'Global Video Intake',
     },
   };
@@ -115,7 +115,7 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
           </div>
         </div>
 
-        {/* Column 2: Center Stage with Mascot Character + Floating Card */}
+        {/* Column 2: Center Stage with Editorial Illustration + Floating Card */}
         <div className="lg:col-span-5 relative flex flex-col items-center justify-center min-h-[460px]">
           {/* Subtle Stage Radial Glow */}
           <div className="absolute w-72 h-72 rounded-full bg-orange-200/40 blur-3xl -z-10 pointer-events-none" />
@@ -126,12 +126,12 @@ export const HeroEditorialIntake: React.FC<HeroEditorialIntakeProps> = ({
             <span>{current.accentText}</span>
           </div>
 
-          {/* Mascot Illustration from repo_clone */}
-          <div className="relative w-72 sm:w-80 h-[380px] flex items-end justify-center overflow-hidden">
+          {/* Editorial Artwork Card */}
+          <div className="relative w-72 sm:w-80 h-[380px] rounded-3xl overflow-hidden shadow-2xl border border-[#EAE2D5] bg-white/60 backdrop-blur-sm p-1.5 transition-all">
             <img
               src={current.image}
-              alt="Mascot intake"
-              className="w-full h-full object-contain object-bottom drop-shadow-md transition-all duration-500"
+              alt={current.heading}
+              className="w-full h-full object-cover rounded-2xl transition-all duration-500"
             />
           </div>
 
