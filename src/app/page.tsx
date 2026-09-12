@@ -10,6 +10,7 @@ import { VersionHistory, VersionSnapshot } from '@/components/VersionHistory';
 import { DiagnosticsView } from '@/components/DiagnosticsView';
 import { YoutubeTranscriber } from '@/components/YoutubeTranscriber';
 import { BhashaHandoff } from '@/components/BhashaHandoff';
+import { HeroEditorialIntake } from '@/components/HeroEditorialIntake';
 import { SettingsModal } from '@/components/SettingsModal';
 import { BuildSpec } from '@/app/api/draft/route';
 import {
@@ -256,14 +257,29 @@ export default function Home() {
         {/* View 1: Build Studio */}
         {activeTab === 'studio' && (
           <div className="space-y-8 animate-fadeIn">
+            {/* Editorial 3-Column Hero with Mascot from repo_clone */}
+            {!currentSpec && (
+              <HeroEditorialIntake
+                onStartVoiceStudio={() => {
+                  const elem = document.getElementById('voiceIntakeCard');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                onOpenZeroDrift={() => setActiveTab('bhasha')}
+                onOpenYoutube={() => setActiveTab('youtube')}
+                onTriggerPreset={(id) => {}}
+              />
+            )}
+
             {/* Audio Intake Component */}
-            <AudioRecorder
-              onTranscribeComplete={handleTranscribeComplete}
-              isLoading={isLoading}
-              setLoadingStateText={setLoadingText}
-              assemblyKeyOverride={assemblyKeyOverride}
-              geminiKeyOverride={geminiKeyOverride}
-            />
+            <div id="voiceIntakeCard">
+              <AudioRecorder
+                onTranscribeComplete={handleTranscribeComplete}
+                isLoading={isLoading}
+                setLoadingStateText={setLoadingText}
+                assemblyKeyOverride={assemblyKeyOverride}
+                geminiKeyOverride={geminiKeyOverride}
+              />
+            </div>
 
             {/* Version History Slider */}
             {currentSpec && (
