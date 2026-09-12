@@ -28,19 +28,19 @@ const SAMPLE_VIDEOS = [
     title: 'Never Gonna Give You Up',
     channel: 'Rick Astley',
     url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    label: '🎵 Music Demo',
+    label: 'Music Demo',
   },
   {
     title: 'Steve Jobs iPhone 2007 Keynote',
     channel: 'Apple Archive',
     url: 'https://www.youtube.com/watch?v=VQKMoT-6XSg',
-    label: '📱 Tech Pitch',
+    label: 'Tech Pitch',
   },
   {
     title: 'Introduction to Generative AI',
     channel: 'Google Cloud Tech',
     url: 'https://www.youtube.com/watch?v=G2fqAlgmoPo',
-    label: '🤖 AI Lecture',
+    label: 'AI Lecture',
   },
 ];
 
@@ -344,7 +344,7 @@ export const YoutubeTranscriber: React.FC<YoutubeTranscriberProps> = ({
                           : 'bg-white text-[#57534E] border-[#EAE2D5] hover:border-[#D4CDBF]'
                       }`}
                     >
-                      <span>{lang.flag}</span>
+                      <span className="font-mono uppercase text-[10px] font-bold opacity-80">{lang.code}</span>
                       <span>{lang.name}</span>
                     </button>
                   );
@@ -358,7 +358,6 @@ export const YoutubeTranscriber: React.FC<YoutubeTranscriberProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EAE2D5] pb-4">
               <div className="flex items-center gap-2">
                 <span className="font-serif text-2xl font-semibold text-[#1C1917]">
-                  {ALL_19_LANGUAGES.find((l) => l.code === activeLanguage)?.flag}{' '}
                   {ALL_19_LANGUAGES.find((l) => l.code === activeLanguage)?.name} Transcript
                 </span>
               </div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, Terminal, Activity, Settings, Cpu, ShieldCheck } from 'lucide-react';
+import { Sparkles, Terminal, Activity, Settings, Cpu, ShieldCheck, Lock, Play } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'studio' | 'youtube' | 'bhasha' | 'diagnostics';
@@ -60,8 +60,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
             }`}
           >
-            <span className="text-orange-500 font-black">🔒</span>
-            <span>Bhasha Team Relay</span>
+            <Lock className="w-3.5 h-3.5" />
+            <span>Zero-Drift Relay</span>
           </button>
 
           <button
@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
             }`}
           >
-            <span className="text-red-500 font-black">▶</span>
+            <Play className="w-3.5 h-3.5 text-red-500 fill-red-500" />
             <span>YouTube 19-Lang</span>
           </button>
 

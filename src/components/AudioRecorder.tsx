@@ -21,7 +21,7 @@ interface AudioRecorderProps {
 const DEMO_PRESETS = [
   {
     id: 'hinglish',
-    flag: '🇮🇳',
+    langLabel: 'HI-IN',
     label: 'Hinglish Code-Switching',
     subtitle: 'Hindi + English tech nouns (Next.js, Supabase, Auth)',
     sampleText: 'Mujhe ek full-stack web application banana hai Next.js aur Supabase use karke, jisme AI agents automatically student ke audio lectures ko structured notes aur flashcards me convert karein. Isme user authentication chahiye and Stripe payment integration hona chahiye for monthly subscriptions.',
@@ -29,7 +29,7 @@ const DEMO_PRESETS = [
   },
   {
     id: 'spanish',
-    flag: '🇪🇸',
+    langLabel: 'ES-ES',
     label: 'Spanish Tech Pitch',
     subtitle: 'Spanish technical prompt with API integration',
     sampleText: 'Quiero construir una plataforma web en Next.js con Tailwind CSS para desarrolladores independientes. La idea es conectar la API de AssemblyAI para dictado por voz y generar diagramas de arquitectura en tiempo real con exportación a GitHub.',
@@ -37,7 +37,7 @@ const DEMO_PRESETS = [
   },
   {
     id: 'german',
-    flag: '🇩🇪',
+    langLabel: 'DE-DE',
     label: 'German Technical',
     subtitle: 'German architecture with Docker & backend',
     sampleText: 'Ich möchte eine moderne Webanwendung mit Docker, FastAPI und PostgreSQL bauen, die automatische Code-Reviews für Pull Requests durchführt und Entwicklern sofortiges Feedback im Terminal gibt.',
@@ -45,7 +45,7 @@ const DEMO_PRESETS = [
   },
   {
     id: 'english',
-    flag: '🇬🇧',
+    langLabel: 'EN-US',
     label: 'English Architect',
     subtitle: 'Rapid English prompt with tech jargon',
     sampleText: 'Build a high-performance developer observability dashboard with Next.js 15, WebSockets, and ClickHouse. It must ingest live telemetry streams, render real-time latency heatmaps, and export automated incident reports.',
@@ -523,7 +523,9 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               }`}
             >
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-lg">{p.flag}</span>
+                <span className="text-[10px] font-mono font-bold uppercase text-[#78716C] bg-[#FAF8F3] border border-[#EAE2D5] px-2 py-0.5 rounded-md">
+                  {p.langLabel}
+                </span>
                 <span className="text-[10px] font-mono font-bold uppercase text-[#E05315] bg-orange-100 px-2 py-0.5 rounded-full">
                   {p.languagePin.toUpperCase()}
                 </span>
