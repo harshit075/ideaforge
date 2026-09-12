@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Copy,
   Check,
@@ -17,9 +17,10 @@ import {
   Server,
   Monitor,
   CheckCircle2,
-} from "lucide-react";
-import confetti from "canvas-confetti";
-import { BuildSpec } from "@/app/api/draft/route";
+  FileText,
+} from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { BuildSpec } from '@/app/api/draft/route';
 
 interface SpecDisplayProps {
   spec: BuildSpec;
@@ -43,10 +44,10 @@ export const SpecDisplay: React.FC<SpecDisplayProps> = ({
   isLoading,
   versionCount,
 }) => {
-  const [activeTab, setActiveTab] = useState<"spec" | "prompt" | "architecture" | "transcript">("spec");
+  const [activeTab, setActiveTab] = useState<'spec' | 'prompt' | 'architecture' | 'transcript'>('spec');
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
-  const [refinementInput, setRefinementInput] = useState("");
+  const [refinementInput, setRefinementInput] = useState('');
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(spec.codingAgentPrompt);
@@ -55,7 +56,7 @@ export const SpecDisplay: React.FC<SpecDisplayProps> = ({
       particleCount: 50,
       spread: 60,
       origin: { y: 0.8 },
-      colors: ["#8b5cf6", "#ec4899", "#3b82f6", "#10b981"],
+      colors: ['#E05315', '#F97316', '#1C1917', '#10B981'],
     });
     setTimeout(() => setCopiedPrompt(false), 2000);
   };
@@ -65,7 +66,7 @@ export const SpecDisplay: React.FC<SpecDisplayProps> = ({
 > ${spec.tagline}
 
 **Version:** ${spec.version || 1}
-**Detected Style:** ${spec.detectedLanguageOrStyle || "Multilingual"}
+**Detected Style:** ${spec.detectedLanguageOrStyle || 'Multilingual'}
 
 ## Problem Statement
 ${spec.problemStatement}
@@ -74,22 +75,22 @@ ${spec.problemStatement}
 ${spec.targetAudience}
 
 ## Core Features (MVP)
-${spec.coreFeatures.mvp.map((f) => `- ${f}`).join("\n")}
+${spec.coreFeatures.mvp.map((f) => `- ${f}`).join('\n')}
 
 ## Phase 2 Roadmap
-${spec.coreFeatures.phase2.map((f) => `- ${f}`).join("\n")}
+${spec.coreFeatures.phase2.map((f) => `- ${f}`).join('\n')}
 
 ## Technology Stack
-- **Frontend:** ${spec.techStack.frontend.join(", ")}
-- **Backend:** ${spec.techStack.backend.join(", ")}
-- **Database:** ${spec.techStack.database.join(", ")}
-- **AI & Speech:** ${spec.techStack.aiAndApis.join(", ")}
-- **Deployment:** ${spec.techStack.deployment.join(", ")}
+- **Frontend:** ${spec.techStack.frontend.join(', ')}
+- **Backend:** ${spec.techStack.backend.join(', ')}
+- **Database:** ${spec.techStack.database.join(', ')}
+- **AI & Speech:** ${spec.techStack.aiAndApis.join(', ')}
+- **Deployment:** ${spec.techStack.deployment.join(', ')}
 
 ## Step-by-Step Build Order
 ${spec.stepByStepBuildOrder
-  .map((s) => `### Step ${s.step}: ${s.title}\n${s.description}${s.terminalSnippet ? `\n\`\`\`bash\n${s.terminalSnippet}\n\`\`\`` : ""}`)
-  .join("\n\n")}
+  .map((s) => `### Step ${s.step}: ${s.title}\n${s.description}${s.terminalSnippet ? `\n\`\`\`bash\n${s.terminalSnippet}\n\`\`\`` : ''}`)
+  .join('\n\n')}
 
 ## Ready-to-Paste Coding Agent Prompt
 \`\`\`markdown
@@ -97,11 +98,11 @@ ${spec.codingAgentPrompt}
 \`\`\`
 `;
 
-    const blob = new Blob([md], { type: "text/markdown" });
+    const blob = new Blob([md], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `${spec.title.toLowerCase().replace(/\s+/g, "-")}-spec.md`;
+    a.download = `${spec.title.toLowerCase().replace(/\s+/g, '-')}-spec.md`;
     a.click();
     URL.revokeObjectURL(url);
     setCopiedMarkdown(true);
@@ -112,134 +113,141 @@ ${spec.codingAgentPrompt}
     e.preventDefault();
     if (!refinementInput.trim() || isLoading) return;
     onRefine(refinementInput.trim());
-    setRefinementInput("");
+    setRefinementInput('');
   };
 
   return (
     <div className="w-full space-y-6">
-      {/* Top Banner: Title, Version, Actions */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-
+      {/* Top Banner Card: Title, Version, Action Buttons */}
+      <div className="warm-card rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#E05315] bg-orange-100 border border-orange-200 px-3 py-1 rounded-full">
                 v{spec.version || 1} Specification
               </span>
               {spec.refinementSummary && (
-                <span className="text-xs text-slate-400 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/5">
+                <span className="text-xs text-[#78716C] bg-[#FAF8F3] px-3 py-1 rounded-full border border-[#EAE2D5]">
                   {spec.refinementSummary}
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">{spec.title}</h1>
-            <p className="text-base text-slate-300 max-w-3xl leading-relaxed">{spec.tagline}</p>
+            <h2 className="text-3xl sm:text-4xl font-serif font-semibold tracking-tight text-[#1C1917]">
+              {spec.title}
+            </h2>
+            <p className="text-sm sm:text-base text-[#57534E] max-w-3xl leading-relaxed">
+              {spec.tagline}
+            </p>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={handleCopyPrompt}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-violet-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow transition-all"
             >
-              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedPrompt ? "Prompt Copied!" : "Copy Agent Prompt"}</span>
+              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-orange-400" />}
+              <span>{copiedPrompt ? 'Prompt Copied!' : 'Copy Agent Prompt'}</span>
             </button>
 
             <button
               onClick={handleExportMarkdown}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 border border-white/10 text-xs sm:text-sm font-medium transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-[#FAF8F3] text-[#44403C] border border-[#E5E0D8] hover:border-[#D4CDBF] text-xs sm:text-sm font-medium transition-all shadow-sm"
             >
-              {copiedMarkdown ? <Check className="w-4 h-4 text-emerald-400" /> : <Download className="w-4 h-4" />}
+              {copiedMarkdown ? <Check className="w-4 h-4 text-emerald-600" /> : <Download className="w-4 h-4 text-[#78716C]" />}
               <span>Export .md</span>
             </button>
           </div>
         </div>
 
-        {/* Tab switcher */}
-        <div className="flex items-center gap-2 mt-6 pt-6 border-t border-white/10 overflow-x-auto">
+        {/* Tab Navigation matching repo_clone */}
+        <div className="flex items-center gap-6 mt-6 pt-4 border-t border-[#EAE2D5] overflow-x-auto text-sm">
           <button
-            onClick={() => setActiveTab("spec")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-              activeTab === "spec"
-                ? "bg-white/10 text-white border border-white/15"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+            onClick={() => setActiveTab('spec')}
+            className={`flex items-center gap-2 pb-2 font-medium transition-colors ${
+              activeTab === 'spec'
+                ? 'text-[#E05315] font-semibold border-b-2 border-[#E05315]'
+                : 'text-[#57534E] hover:text-[#1C1917]'
             }`}
           >
-            <Layers className="w-4 h-4 text-violet-400" />
+            <Layers className="w-4 h-4" />
             <span>Architecture & Features</span>
           </button>
 
           <button
-            onClick={() => setActiveTab("prompt")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-              activeTab === "prompt"
-                ? "bg-white/10 text-white border border-white/15"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+            onClick={() => setActiveTab('prompt')}
+            className={`flex items-center gap-2 pb-2 font-medium transition-colors ${
+              activeTab === 'prompt'
+                ? 'text-[#E05315] font-semibold border-b-2 border-[#E05315]'
+                : 'text-[#57534E] hover:text-[#1C1917]'
             }`}
           >
-            <Terminal className="w-4 h-4 text-emerald-400" />
+            <Terminal className="w-4 h-4" />
             <span>Coding Agent Prompt</span>
           </button>
 
           <button
-            onClick={() => setActiveTab("transcript")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-              activeTab === "transcript"
-                ? "bg-white/10 text-white border border-white/15"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+            onClick={() => setActiveTab('transcript')}
+            className={`flex items-center gap-2 pb-2 font-medium transition-colors ${
+              activeTab === 'transcript'
+                ? 'text-[#E05315] font-semibold border-b-2 border-[#E05315]'
+                : 'text-[#57534E] hover:text-[#1C1917]'
             }`}
           >
-            <Mic className="w-4 h-4 text-cyan-400" />
-            <span>Voice Intake Telemetry</span>
+            <Mic className="w-4 h-4" />
+            <span>Voice Telemetry</span>
           </button>
         </div>
       </div>
 
       {/* Tab: Architecture & Features */}
-      {activeTab === "spec" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Problem & Audience Card */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-violet-400">Core Problem & Mission</h3>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed">{spec.problemStatement}</p>
-              <div className="pt-3 border-t border-white/5 flex items-center gap-2 text-xs text-slate-400">
-                <span className="font-semibold text-slate-300">Target User:</span>
+      {activeTab === 'spec' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Problem, Matrix, Execution Order */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* Mission Card */}
+            <div className="warm-card rounded-2xl p-6 shadow-sm space-y-3">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C]">
+                Core Problem Statement
+              </span>
+              <p className="text-sm sm:text-base text-[#1C1917] leading-relaxed">
+                {spec.problemStatement}
+              </p>
+              <div className="pt-2 border-t border-[#F5F2EC] flex items-center gap-2 text-xs text-[#78716C]">
+                <span className="font-semibold text-[#1C1917]">Target Persona:</span>
                 <span>{spec.targetAudience}</span>
               </div>
             </div>
 
             {/* Feature Matrix */}
-            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-violet-400">Feature Matrix</h3>
-                <span className="text-xs text-slate-400">MVP vs Future Scale</span>
+            <div className="warm-card rounded-2xl p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-[#F5F2EC] pb-3">
+                <h3 className="font-serif text-xl font-semibold text-[#1C1917]">Feature Scope</h3>
+                <span className="text-xs text-[#78716C]">MVP vs Scale</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-violet-950/20 border border-violet-500/20 space-y-2.5">
-                  <span className="text-xs font-bold text-violet-300 uppercase tracking-wider">
+                <div className="p-4 rounded-xl bg-orange-50/70 border border-orange-200 space-y-2.5">
+                  <span className="text-xs font-bold text-[#E05315] uppercase tracking-wider block">
                     MVP Scope (Phase 1)
                   </span>
-                  <ul className="space-y-2 text-xs text-slate-300">
+                  <ul className="space-y-2 text-xs text-[#1C1917]">
                     {spec.coreFeatures.mvp.map((f, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#E05315] shrink-0 mt-0.5" />
                         <span>{f}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-2.5">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Roadmap (Phase 2)
+                <div className="p-4 rounded-xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-2.5">
+                  <span className="text-xs font-bold text-[#78716C] uppercase tracking-wider block">
+                    Future Roadmap (Phase 2)
                   </span>
-                  <ul className="space-y-2 text-xs text-slate-400">
+                  <ul className="space-y-2 text-xs text-[#57534E]">
                     {spec.coreFeatures.phase2.map((f, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-500 shrink-0 mt-1.5" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#A8A29E] shrink-0 mt-1.5" />
                         <span>{f}</span>
                       </li>
                     ))}
@@ -249,20 +257,20 @@ ${spec.codingAgentPrompt}
             </div>
 
             {/* Build Sequence */}
-            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-violet-400">Step-by-Step Execution Plan</h3>
+            <div className="warm-card rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="font-serif text-xl font-semibold text-[#1C1917]">Step-by-Step Execution Plan</h3>
               <div className="space-y-3">
                 {spec.stepByStepBuildOrder.map((step) => (
-                  <div key={step.step} className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1.5">
+                  <div key={step.step} className="p-4 rounded-xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-1.5">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-violet-600/30 text-violet-300 flex items-center justify-center font-mono text-xs font-bold">
+                      <span className="w-5 h-5 rounded-full bg-orange-100 text-[#E05315] flex items-center justify-center font-mono text-xs font-bold">
                         {step.step}
                       </span>
-                      <span className="font-semibold text-xs sm:text-sm text-white">{step.title}</span>
+                      <span className="font-semibold text-xs sm:text-sm text-[#1C1917]">{step.title}</span>
                     </div>
-                    <p className="text-xs text-slate-400 ml-7 leading-relaxed">{step.description}</p>
+                    <p className="text-xs text-[#57534E] ml-7 leading-relaxed">{step.description}</p>
                     {step.terminalSnippet && (
-                      <div className="ml-7 mt-2 p-2 bg-slate-950 rounded-lg border border-white/10 font-mono text-[11px] text-emerald-300 flex items-center justify-between">
+                      <div className="ml-7 mt-2 p-2.5 bg-[#1C1917] rounded-lg font-mono text-[11px] text-emerald-300 overflow-x-auto">
                         <code>{step.terminalSnippet}</code>
                       </div>
                     )}
@@ -272,23 +280,23 @@ ${spec.codingAgentPrompt}
             </div>
           </div>
 
-          {/* Tech Stack Sidebar */}
-          <div className="space-y-6">
-            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-violet-400 flex items-center gap-2">
-                <Cpu className="w-4 h-4" />
-                <span>Curated Tech Stack</span>
-              </h3>
+          {/* Right Column: Curated Stack & Mermaid Architecture */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Tech Stack Card */}
+            <div className="warm-card rounded-2xl p-6 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 border-b border-[#F5F2EC] pb-3">
+                <Cpu className="w-4 h-4 text-[#E05315]" />
+                <h3 className="font-serif text-lg font-semibold text-[#1C1917]">Curated Tech Stack</h3>
+              </div>
 
-              <div className="space-y-3.5">
+              <div className="space-y-4 text-xs">
                 <div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                    <Monitor className="w-3 h-3 text-cyan-400" />
-                    <span>Frontend</span>
+                  <span className="text-[10px] font-bold text-[#78716C] uppercase tracking-wider block mb-1.5">
+                    Frontend
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {spec.techStack.frontend.map((item, i) => (
-                      <span key={i} className="px-2.5 py-1 rounded-lg text-xs bg-cyan-950/40 text-cyan-300 border border-cyan-500/20">
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-[#FAF8F3] border border-[#EAE2D5] text-[#1C1917]">
                         {item}
                       </span>
                     ))}
@@ -296,13 +304,12 @@ ${spec.codingAgentPrompt}
                 </div>
 
                 <div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                    <Server className="w-3 h-3 text-violet-400" />
-                    <span>Backend & APIs</span>
+                  <span className="text-[10px] font-bold text-[#78716C] uppercase tracking-wider block mb-1.5">
+                    Backend & Server
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {spec.techStack.backend.map((item, i) => (
-                      <span key={i} className="px-2.5 py-1 rounded-lg text-xs bg-violet-950/40 text-violet-300 border border-violet-500/20">
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-[#FAF8F3] border border-[#EAE2D5] text-[#1C1917]">
                         {item}
                       </span>
                     ))}
@@ -310,13 +317,12 @@ ${spec.codingAgentPrompt}
                 </div>
 
                 <div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                    <Database className="w-3 h-3 text-emerald-400" />
-                    <span>Database & Storage</span>
+                  <span className="text-[10px] font-bold text-[#78716C] uppercase tracking-wider block mb-1.5">
+                    Database & Storage
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {spec.techStack.database.map((item, i) => (
-                      <span key={i} className="px-2.5 py-1 rounded-lg text-xs bg-emerald-950/40 text-emerald-300 border border-emerald-500/20">
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
                         {item}
                       </span>
                     ))}
@@ -324,13 +330,12 @@ ${spec.codingAgentPrompt}
                 </div>
 
                 <div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                    <Sparkles className="w-3 h-3 text-purple-400" />
-                    <span>AI & Speech Engines</span>
+                  <span className="text-[10px] font-bold text-[#78716C] uppercase tracking-wider block mb-1.5">
+                    AI & Voice Engines
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {spec.techStack.aiAndApis.map((item, i) => (
-                      <span key={i} className="px-2.5 py-1 rounded-lg text-xs bg-purple-950/40 text-purple-300 border border-purple-500/20 font-semibold">
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-orange-50 text-[#E05315] border border-orange-200 font-semibold">
                         {item}
                       </span>
                     ))}
@@ -339,14 +344,14 @@ ${spec.codingAgentPrompt}
               </div>
             </div>
 
-            {/* Architecture Diagram Preview */}
-            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-3">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-violet-400 flex items-center gap-2">
-                <GitBranch className="w-4 h-4" />
-                <span>Architecture Graph (Mermaid)</span>
-              </h3>
-              <pre className="p-3 bg-slate-950 rounded-xl border border-white/10 font-mono text-[11px] text-slate-300 overflow-x-auto whitespace-pre">
-                {spec.mermaidDiagram || `graph TD\n  User --> App\n  App --> AssemblyAI\n  App --> Gemini`}
+            {/* Architecture Mermaid Graph */}
+            <div className="warm-card rounded-2xl p-6 shadow-sm space-y-3">
+              <div className="flex items-center gap-2 border-b border-[#F5F2EC] pb-2">
+                <GitBranch className="w-4 h-4 text-[#E05315]" />
+                <h3 className="font-serif text-lg font-semibold text-[#1C1917]">Architecture Graph</h3>
+              </div>
+              <pre className="p-3 bg-[#FAF8F3] rounded-xl border border-[#EAE2D5] font-mono text-[11px] text-[#1C1917] overflow-x-auto whitespace-pre leading-relaxed">
+                {spec.mermaidDiagram || `graph TD\n  User --> AssemblyAI\n  AssemblyAI --> Gemini\n  Gemini --> CodingPrompt`}
               </pre>
             </div>
           </div>
@@ -354,134 +359,122 @@ ${spec.codingAgentPrompt}
       )}
 
       {/* Tab: Coding Agent Prompt */}
-      {activeTab === "prompt" && (
-        <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+      {activeTab === 'prompt' && (
+        <div className="warm-card rounded-3xl p-6 sm:p-8 shadow-md space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EAE2D5] pb-4">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-emerald-400" />
-                <span>Ready-to-Paste Coding Agent Prompt</span>
+              <h3 className="font-serif text-2xl font-semibold text-[#1C1917]">
+                Ready-to-Paste Coding Agent Prompt
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Paste directly into Cursor, Claude Code, or Antigravity IDE to build this exact project.
+              <p className="text-xs text-[#57534E] mt-0.5">
+                Paste directly into Cursor, Antigravity IDE, or Claude Code to build this application.
               </p>
             </div>
             <button
               onClick={handleCopyPrompt}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs shadow-lg shadow-violet-600/30 transition-all self-start sm:self-auto"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1C1917] hover:bg-[#2C2927] text-white font-medium text-xs shadow-sm transition-all"
             >
-              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedPrompt ? "Copied to Clipboard!" : "Copy Full Prompt"}</span>
+              {copiedPrompt ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-orange-400" />}
+              <span>{copiedPrompt ? 'Copied Prompt!' : 'Copy Full Prompt'}</span>
             </button>
           </div>
 
           <div className="relative">
-            <pre className="p-5 bg-slate-950/90 rounded-xl border border-white/10 font-mono text-xs sm:text-sm text-emerald-300/90 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[600px] overflow-y-auto">
+            <pre className="p-6 bg-[#1C1917] text-[#FAF8F3] rounded-2xl font-mono text-xs sm:text-sm overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[600px] overflow-y-auto">
               {spec.codingAgentPrompt}
             </pre>
           </div>
         </div>
       )}
 
-      {/* Tab: Voice Intake Telemetry (AssemblyAI Dictation) */}
-      {activeTab === "transcript" && (
-        <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-white/10">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Mic className="w-5 h-5 text-cyan-400" />
-                <span>AssemblyAI Universal-3.5 Pro Dictation Telemetry</span>
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Showing raw verbatim transcript alongside AssemblyAI cleaned rewrite (fillers removed).
-              </p>
-            </div>
+      {/* Tab: Voice Telemetry */}
+      {activeTab === 'transcript' && (
+        <div className="warm-card rounded-3xl p-6 sm:p-8 shadow-md space-y-6">
+          <div className="border-b border-[#EAE2D5] pb-3">
+            <h3 className="font-serif text-2xl font-semibold text-[#1C1917]">
+              AssemblyAI Universal-3.5 Pro Voice Telemetry
+            </h3>
+            <p className="text-xs text-[#57534E] mt-0.5">
+              Comparing raw verbatim spoken words against AssemblyAI Dictation clean rewrite.
+            </p>
           </div>
 
           {transcriptData ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-white/10 space-y-2">
+              <div className="p-4 rounded-xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Verbatim As Spoken (Raw Text)
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C]">
+                    Verbatim As Spoken (Raw)
                   </span>
-                  <span className="text-[10px] font-mono text-slate-500">Unfiltered</span>
+                  <span className="text-[10px] text-[#A8A29E]">Unfiltered</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap">
-                  "{transcriptData.text || "No speech text"}"
+                <p className="text-xs text-[#57534E] font-mono leading-relaxed whitespace-pre-wrap">
+                  "{transcriptData.text || 'No speech recorded'}"
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-violet-950/20 border border-violet-500/30 space-y-2">
+              <div className="p-4 rounded-xl bg-orange-50 border border-orange-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-violet-400">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#E05315]">
                     Dictation Clean Rewrite (llm_response)
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400">Fillers Removed</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">Fillers Cleaned</span>
                 </div>
-                <p className="text-xs text-white leading-relaxed font-mono whitespace-pre-wrap">
+                <p className="text-xs text-[#1C1917] font-mono leading-relaxed whitespace-pre-wrap font-semibold">
                   "{transcriptData.llm_response || transcriptData.text}"
                 </p>
               </div>
 
               <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold">Total Turnaround</span>
-                  <p className="text-sm font-mono font-bold text-white mt-0.5">
-                    {transcriptData.request_time_ms}ms
-                  </p>
+                <div className="p-3 bg-[#FAF8F3] border border-[#EAE2D5] rounded-xl">
+                  <span className="text-[10px] text-[#78716C] font-bold uppercase block">Round-Trip Time</span>
+                  <p className="text-sm font-mono font-bold text-[#1C1917] mt-0.5">{transcriptData.request_time_ms}ms</p>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold">Sync Time</span>
-                  <p className="text-sm font-mono font-bold text-cyan-400 mt-0.5">
-                    {Math.round(transcriptData.sync_time_ms || 410)}ms
-                  </p>
+                <div className="p-3 bg-[#FAF8F3] border border-[#EAE2D5] rounded-xl">
+                  <span className="text-[10px] text-[#78716C] font-bold uppercase block">ASR Sync Time</span>
+                  <p className="text-sm font-mono font-bold text-[#E05315] mt-0.5">{Math.round(transcriptData.sync_time_ms || 410)}ms</p>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold">ASR Confidence</span>
-                  <p className="text-sm font-mono font-bold text-emerald-400 mt-0.5">
-                    {Math.round(transcriptData.confidence * 100)}%
-                  </p>
+                <div className="p-3 bg-[#FAF8F3] border border-[#EAE2D5] rounded-xl">
+                  <span className="text-[10px] text-[#78716C] font-bold uppercase block">Confidence</span>
+                  <p className="text-sm font-mono font-bold text-emerald-700 mt-0.5">{Math.round(transcriptData.confidence * 100)}%</p>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold">Session ID</span>
-                  <p className="text-xs font-mono text-slate-400 mt-0.5 truncate">
-                    {transcriptData.session_id || "aai-live"}
-                  </p>
+                <div className="p-3 bg-[#FAF8F3] border border-[#EAE2D5] rounded-xl">
+                  <span className="text-[10px] text-[#78716C] font-bold uppercase block">Session ID</span>
+                  <p className="text-xs font-mono text-[#57534E] mt-0.5 truncate">{transcriptData.session_id || 'aai-live'}</p>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-400">No active transcription telemetry recorded for this view.</p>
+            <p className="text-xs text-[#78716C]">No speech recorded in this session yet.</p>
           )}
         </div>
       )}
 
-      {/* Follow-up Refinement Bar (Multilingual In-Place Updates) */}
-      <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-3">
+      {/* Follow-up Refinement Bar (In-Place Spec Updates) */}
+      <div className="warm-card rounded-2xl p-6 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <RefreshCw className={`w-3.5 h-3.5 text-violet-400 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Refine This Spec In Any Language (Updates In-Place)</span>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-2">
+            <RefreshCw className={`w-3.5 h-3.5 text-[#E05315] ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Refine Spec In Any Language (Updates In-Place)</span>
           </label>
-          <span className="text-[11px] text-slate-400">
-            Currently on <strong className="text-violet-300">v{spec.version || 1}</strong>
+          <span className="text-xs text-[#78716C]">
+            Active: <strong className="text-[#E05315]">v{spec.version || 1}</strong>
           </span>
         </div>
 
         <form onSubmit={submitRefinement} className="flex gap-2">
           <input
             type="text"
-            placeholder="e.g. 'Mujhe isme Stripe billing aur mobile-first responsive layout add karna hai' (any language)"
+            placeholder="e.g. 'Mujhe isme Stripe billing aur mobile layout add karna hai' (any language)"
             value={refinementInput}
             onChange={(e) => setRefinementInput(e.target.value)}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 bg-slate-900/90 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-all"
+            className="flex-1 px-4 py-3 bg-[#FAF8F3] border border-[#EAE2D5] rounded-xl text-sm text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#E05315] transition-all"
           />
           <button
             type="submit"
             disabled={isLoading || !refinementInput.trim()}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-violet-600/30 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#E05315] hover:bg-[#C2410C] text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50"
           >
             <span>Apply Refinement</span>
             <ArrowRight className="w-4 h-4" />

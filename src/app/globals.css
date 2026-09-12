@@ -1,57 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: 240 10% 4%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 7%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 7%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 263 85% 65%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 5% 15%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 5% 18%;
-  --muted-foreground: 240 5% 65%;
-  --accent: 263 70% 50%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 6% 18%;
-  --input: 240 6% 20%;
-  --ring: 263 85% 65%;
-  --radius: 0.75rem;
+  --bg-cream: #FAF8F3;
+  --text-dark: #1C1917;
+  --text-muted: #57534E;
+  --brand-orange: #E05315;
+  --border-warm: #EAE2D5;
 }
 
 body {
-  color: #f8fafc;
-  background: radial-gradient(circle at 50% 0%, #150d2a 0%, #080a10 60%, #030407 100%);
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
 }
 
-/* Glassmorphism Card Style */
-.glass-panel {
-  background: rgba(18, 16, 29, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+.font-serif {
+  font-family: 'Instrument Serif', Georgia, serif;
 }
 
-.glass-panel-glow {
-  background: rgba(22, 18, 38, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.25);
+.font-sans {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.glass-panel-subtle {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+/* Warm Card Surfaces */
+.warm-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EAE2D5;
+  box-shadow: 0 4px 20px -2px rgba(28, 25, 23, 0.05);
+}
+
+.warm-card-subtle {
+  background-color: #FAF8F3;
+  border: 1px solid #EAE2D5;
+}
+
+/* Smooth pulse animation for live recording indicator */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Waveform Visualizer Bar Animations */
@@ -60,30 +62,18 @@ body {
   border-radius: 4px;
 }
 
-/* Custom Scrollbar */
+/* Custom Warm Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
-
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: #FAF8F3;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 3px;
+  background: #E5E0D8;
+  border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
-}
-
-/* Neon Text Glow */
-.text-glow-violet {
-  text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-}
-
-.text-glow-cyan {
-  text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+  background: #D4CDBF;
 }

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "IdeaForge v2 — Multilingual Voice-to-Spec & API Diagnostics",
+  title: "IdeaForge v2 — Voice-First AI Build Studio & API Diagnostics",
   description:
-    "Transform multilingual & code-switched voice ideas into production build specs, architecture diagrams, and ready-to-paste coding agent prompts. Features built-in API diagnostics for AssemblyAI Dictation and Gemini.",
+    "Transform multilingual & code-switched voice ideas into production build specs and ready-to-paste coding agent prompts. Powered by AssemblyAI Universal-3.5 Pro and Google Gemini.",
 };
 
 export default function RootLayout({
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased min-h-screen text-slate-100 selection:bg-purple-500 selection:text-white">
+    <html lang="en">
+      <body className="antialiased min-h-screen bg-[#FAF8F3] text-[#1C1917] selection:bg-orange-100 selection:text-[#E05315]">
         {children}
       </body>
     </html>

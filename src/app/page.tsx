@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Navbar } from "@/components/Navbar";
-import { AudioRecorder } from "@/components/AudioRecorder";
-import { SpecDisplay } from "@/components/SpecDisplay";
-import { VersionHistory, VersionSnapshot } from "@/components/VersionHistory";
-import { DiagnosticsView } from "@/components/DiagnosticsView";
-import { SettingsModal } from "@/components/SettingsModal";
-import { BuildSpec } from "@/app/api/draft/route";
+import React, { useState, useEffect } from 'react';
+import BannerTop from '@/components/BannerTop';
+import { Navbar } from '@/components/Navbar';
+import MandalaBackground from '@/components/MandalaBackground';
+import { AudioRecorder } from '@/components/AudioRecorder';
+import { SpecDisplay } from '@/components/SpecDisplay';
+import { VersionHistory, VersionSnapshot } from '@/components/VersionHistory';
+import { DiagnosticsView } from '@/components/DiagnosticsView';
+import { SettingsModal } from '@/components/SettingsModal';
+import { BuildSpec } from '@/app/api/draft/route';
 import {
   Sparkles,
   Layers,
@@ -15,18 +17,18 @@ import {
   AlertCircle,
   Clock,
   RotateCcw,
-  Zap,
   Globe2,
   Mic,
   Cpu,
-} from "lucide-react";
+  ShieldCheck,
+} from 'lucide-react';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"studio" | "diagnostics">("studio");
+  const [activeTab, setActiveTab] = useState<'studio' | 'diagnostics'>('studio');
   const [hasAssemblyAiKey, setHasAssemblyAiKey] = useState(true);
   const [hasGeminiKey, setHasGeminiKey] = useState(false);
-  const [assemblyKeyOverride, setAssemblyKeyOverride] = useState("");
-  const [geminiKeyOverride, setGeminiKeyOverride] = useState("");
+  const [assemblyKeyOverride, setAssemblyKeyOverride] = useState('');
+  const [geminiKeyOverride, setGeminiKeyOverride] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // App workflow state
@@ -42,11 +44,11 @@ export default function Home() {
   } | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Processing...");
+  const [loadingText, setLoadingText] = useState('Processing...');
   const [errorMessage, setErrorMessage] = useState<{
     title: string;
     message: string;
-    type?: "auth" | "rate_limit" | "low_confidence" | "general";
+    type?: 'auth' | 'rate_limit' | 'low_confidence' | 'general';
     retryAfter?: number;
   } | null>(null);
 
@@ -54,7 +56,7 @@ export default function Home() {
 
   // Check server configuration status on mount
   useEffect(() => {
-    fetch("/api/config")
+    fetch('/api/config')
       .then((res) => res.json())
       .then((data) => {
         setHasAssemblyAiKey(data.hasAssemblyAiKey);
@@ -78,23 +80,23 @@ export default function Home() {
     // If confidence is low, warn
     if (data.confidence < 0.4 && data.text.length > 0) {
       setErrorMessage({
-        title: "Low Transcription Confidence",
+        title: 'Low Transcription Confidence',
         message:
-          "AssemblyAI detected lower confidence audio. You can proceed with this draft or tap to re-record.",
-        type: "low_confidence",
+          'AssemblyAI detected lower confidence audio. You can proceed with this draft or tap to re-record.',
+        type: 'low_confidence',
       });
     }
 
-    // Now call /api/draft
+    // Call /api/draft
     setIsLoading(true);
-    setLoadingText("Synthesizing architecture & coding prompt with Gemini...");
+    setLoadingText('Synthesizing technical architecture & coding prompt with Gemini...');
 
     try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (geminiKeyOverride) headers["x-gemini-key"] = geminiKeyOverride;
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (geminiKeyOverride) headers['x-gemini-key'] = geminiKeyOverride;
 
-      const res = await fetch("/api/draft", {
-        method: "POST",
+      const res = await fetch('/api/draft', {
+        method: 'POST',
         headers,
         body: JSON.stringify({
           transcript: data.text,
@@ -105,7 +107,7 @@ export default function Home() {
 
       const draftResult = await res.json();
       if (!res.ok) {
-        throw new Error(draftResult.error || "Failed to generate spec");
+        throw new Error(draftResult.error || 'Failed to generate spec');
       }
 
       const newSpec: BuildSpec = draftResult.spec;
@@ -114,17 +116,17 @@ export default function Home() {
       // Record snapshot in version history
       const snapshot: VersionSnapshot = {
         version: newSpec.version || versionHistory.length + 1,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         spec: newSpec,
-        summary: newSpec.refinementSummary || "Voice synthesized draft",
+        summary: newSpec.refinementSummary || 'Voice synthesized draft',
       };
 
       setVersionHistory((prev) => [...prev, snapshot]);
     } catch (err: any) {
       setErrorMessage({
-        title: "Architecture Synthesis Failed",
-        message: err.message || "Failed to build specification from transcript.",
-        type: "general",
+        title: 'Architecture Synthesis Failed',
+        message: err.message || 'Failed to build specification from transcript.',
+        type: 'general',
       });
     } finally {
       setIsLoading(false);
@@ -139,11 +141,11 @@ export default function Home() {
     setErrorMessage(null);
 
     try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (geminiKeyOverride) headers["x-gemini-key"] = geminiKeyOverride;
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (geminiKeyOverride) headers['x-gemini-key'] = geminiKeyOverride;
 
-      const res = await fetch("/api/draft", {
-        method: "POST",
+      const res = await fetch('/api/draft', {
+        method: 'POST',
         headers,
         body: JSON.stringify({
           refinementNotes: refinementText,
@@ -152,24 +154,24 @@ export default function Home() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Refinement failed");
+      if (!res.ok) throw new Error(data.error || 'Refinement failed');
 
       const updatedSpec: BuildSpec = data.spec;
       setCurrentSpec(updatedSpec);
 
       const snapshot: VersionSnapshot = {
         version: updatedSpec.version || versionHistory.length + 1,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         spec: updatedSpec,
-        summary: updatedSpec.refinementSummary || "Refinement update",
+        summary: updatedSpec.refinementSummary || 'Refinement update',
       };
 
       setVersionHistory((prev) => [...prev, snapshot]);
     } catch (err: any) {
       setErrorMessage({
-        title: "Refinement Error",
+        title: 'Refinement Error',
         message: err.message,
-        type: "general",
+        type: 'general',
       });
     } finally {
       setIsLoading(false);
@@ -182,8 +184,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col selection:bg-purple-500 selection:text-white pb-20">
-      {/* Top Navigation */}
+    <div className="min-h-screen bg-[#FAF8F3] text-[#1C1917] flex flex-col relative selection:bg-orange-100 selection:text-[#E05315] pb-24">
+      {/* Top Banner Bar */}
+      <BannerTop />
+
+      {/* Header Navigation matching repo_clone */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -193,35 +198,38 @@ export default function Home() {
         anomalyCount={anomalyCount}
       />
 
+      {/* Heritage Mandala Decorative Background Accent */}
+      <MandalaBackground />
+
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 w-full flex-1 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 z-10 w-full space-y-8">
         {/* Real Error State Banner */}
         {errorMessage && (
           <div
-            className={`p-4 sm:p-5 rounded-2xl border flex items-start gap-4 animate-in fade-in ${
-              errorMessage.type === "auth"
-                ? "bg-rose-950/40 border-rose-500/40 text-rose-300"
-                : errorMessage.type === "rate_limit"
-                ? "bg-amber-950/40 border-amber-500/40 text-amber-300"
-                : "bg-purple-950/40 border-purple-500/40 text-purple-200"
+            className={`p-4 sm:p-5 rounded-2xl border flex items-start gap-4 animate-fadeIn ${
+              errorMessage.type === 'auth'
+                ? 'bg-rose-50 border-rose-200 text-rose-800'
+                : errorMessage.type === 'rate_limit'
+                ? 'bg-amber-50 border-amber-200 text-amber-800'
+                : 'bg-orange-50 border-orange-200 text-[#E05315]'
             }`}
           >
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-sm text-white">{errorMessage.title}</h4>
-              <p className="text-xs mt-1 leading-relaxed">{errorMessage.message}</p>
+              <h4 className="font-bold text-sm text-[#1C1917]">{errorMessage.title}</h4>
+              <p className="text-xs mt-1 leading-relaxed text-[#57534E]">{errorMessage.message}</p>
             </div>
-            {errorMessage.type === "auth" && (
+            {errorMessage.type === 'auth' && (
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition-all"
+                className="px-3.5 py-1.5 rounded-full bg-[#E05315] hover:bg-[#C2410C] text-white font-semibold text-xs transition-all"
               >
                 Configure Keys
               </button>
             )}
             <button
               onClick={() => setErrorMessage(null)}
-              className="text-xs text-slate-400 hover:text-white px-2 py-1"
+              className="text-xs text-[#78716C] hover:text-[#1C1917] px-2 py-1 font-semibold"
             >
               Dismiss
             </button>
@@ -230,23 +238,20 @@ export default function Home() {
 
         {/* Real Loading State with Informative Steps */}
         {isLoading && (
-          <div className="glass-panel-glow rounded-2xl p-6 flex items-center justify-center gap-4 animate-pulse">
-            <div className="relative">
-              <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
-              <Sparkles className="w-4 h-4 text-violet-400 absolute inset-0 m-auto animate-ping" />
-            </div>
+          <div className="warm-card rounded-2xl p-6 flex items-center justify-center gap-4 shadow-md animate-pulse">
+            <div className="w-7 h-7 rounded-full border-2 border-[#E05315] border-t-transparent animate-spin" />
             <div>
-              <p className="font-bold text-white text-sm">{loadingText}</p>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Universal-3.5 Pro + Gemini 1.5 Architecture Orchestrator
+              <p className="font-bold text-[#1C1917] text-sm">{loadingText}</p>
+              <p className="text-xs text-[#78716C] mt-0.5">
+                Universal-3.5 Pro + Gemini Architecture Orchestrator
               </p>
             </div>
           </div>
         )}
 
         {/* View 1: Build Studio */}
-        {activeTab === "studio" && (
-          <div className="space-y-8 animate-in fade-in">
+        {activeTab === 'studio' && (
+          <div className="space-y-8 animate-fadeIn">
             {/* Audio Intake Component */}
             <AudioRecorder
               onTranscribeComplete={handleTranscribeComplete}
@@ -275,26 +280,26 @@ export default function Home() {
                 versionCount={versionHistory.length}
               />
             ) : (
-              /* Empty state with helpful guidance */
-              <div className="glass-panel rounded-3xl p-10 sm:p-14 text-center border border-white/10 space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-violet-600/30 to-indigo-600/30 text-violet-300 flex items-center justify-center mx-auto border border-violet-500/20 shadow-lg shadow-purple-500/10">
-                  <Mic className="w-8 h-8" />
+              /* Empty state matching repo_clone */
+              <div className="warm-card rounded-3xl p-10 sm:p-14 text-center space-y-4 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-orange-100 text-[#E05315] flex items-center justify-center mx-auto border border-orange-200">
+                  <Mic className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold text-white">Your Workspace Is Ready</h3>
-                <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
-                  Press the microphone button above or pick one of the code-switching demo presets to watch Universal-3.5 Pro transcribe your words and Gemini compile an engineering spec.
+                <h3 className="font-serif text-2xl font-semibold text-[#1C1917]">Your Build Studio is Ready</h3>
+                <p className="text-sm text-[#57534E] max-w-md mx-auto leading-relaxed">
+                  Press the microphone button or pick one of the code-switching demo clips to watch Universal-3.5 Pro transcribe your words and Gemini compile your engineering roadmap.
                 </p>
-                <div className="flex items-center justify-center gap-6 pt-3 text-xs text-slate-500">
+                <div className="flex items-center justify-center gap-6 pt-3 text-xs text-[#78716C]">
                   <span className="flex items-center gap-1.5">
-                    <Globe2 className="w-3.5 h-3.5 text-violet-400" />
+                    <Globe2 className="w-3.5 h-3.5 text-[#E05315]" />
                     <span>19 Native Languages</span>
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#E05315]" />
                     <span>Instant Code-Switching</span>
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                    <Cpu className="w-3.5 h-3.5 text-[#E05315]" />
                     <span>Cursor & Antigravity Ready</span>
                   </span>
                 </div>
@@ -304,8 +309,8 @@ export default function Home() {
         )}
 
         {/* View 2: API Diagnostics & Bug Hunter */}
-        {activeTab === "diagnostics" && (
-          <div className="animate-in fade-in">
+        {activeTab === 'diagnostics' && (
+          <div className="animate-fadeIn">
             <DiagnosticsView
               assemblyKeyOverride={assemblyKeyOverride}
               geminiKeyOverride={geminiKeyOverride}
