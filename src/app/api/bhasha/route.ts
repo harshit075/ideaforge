@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
     const isDelta = !!deltaCorrection && !!existingPacket;
 
     const extractionPrompt = `
-You are the Bhasha Fact-Lock Extraction Engine.
-Your job is NOT sentence-by-sentence translation. Your job is to extract invariant factual truths into a structured "Meaning Packet" where critical facts are locked (🔒).
+You are the IdeaForge Fact-Lock Extraction Engine.
+Your job is NOT sentence-by-sentence translation. Your job is to extract invariant factual truths into a structured "Meaning Packet" where critical facts are locked and verified for 0% drift.
 
 ${
   isDelta
@@ -136,7 +136,7 @@ Return ONLY valid JSON matching this exact structure with NO markdown fences:
       {
         language: "en",
         languageName: "English (Global Lead)",
-        flag: "🇬🇧",
+        flag: "EN",
         recipientName: "Alex (Engineering Lead)",
         headline: `Task: ${meaningPacket.action}`,
         action_rendered: `Assigned to ${meaningPacket.locked_fields.owner}: Execute ${meaningPacket.action.toLowerCase()} with strict deadline of ${meaningPacket.locked_fields.deadline}.`,
@@ -146,12 +146,12 @@ Return ONLY valid JSON matching this exact structure with NO markdown fences:
           condition: meaningPacket.locked_fields.conditions.join("; ") || "Standard gate checks",
           priority: meaningPacket.locked_fields.critical_values.find(v => v.label.toLowerCase() === "priority")?.value || "High",
         },
-        native_memo: `⚡ Task Handoff: ${meaningPacket.action}\n👤 Assignee: ${meaningPacket.locked_fields.owner} 🔒\n⏰ Deadline: ${meaningPacket.locked_fields.deadline} 🔒\n⚠️ Condition: ${meaningPacket.locked_fields.conditions.join(", ") || "None"} 🔒\n🎯 Status: Verified (0% Drift)`,
+        native_memo: `[Task Handoff] ${meaningPacket.action}\n[Assignee] ${meaningPacket.locked_fields.owner} [Locked]\n[Deadline] ${meaningPacket.locked_fields.deadline} [Locked]\n[Condition] ${meaningPacket.locked_fields.conditions.join(", ") || "None"} [Locked]\n[Status] Verified (0% Drift)`,
       },
       {
         language: "hi",
         languageName: "Hindi (हिंदी)",
-        flag: "🇮🇳",
+        flag: "HI",
         recipientName: `${meaningPacket.locked_fields.owner} (Backend Lead)`,
         headline: `कार्य: ${meaningPacket.action}`,
         action_rendered: `${meaningPacket.locked_fields.owner} को ${meaningPacket.locked_fields.deadline} तक एप्लिकेशन डिप्लॉय करना है। शर्त: ${meaningPacket.locked_fields.conditions.join("; ")}।`,
@@ -161,12 +161,12 @@ Return ONLY valid JSON matching this exact structure with NO markdown fences:
           condition: meaningPacket.locked_fields.conditions.join("; ") || "सभी परीक्षण सफल होने के बाद",
           priority: "उच्च (High)",
         },
-        native_memo: `⚡ कार्य निर्देश: ${meaningPacket.action}\n👤 जिम्मेदार: ${meaningPacket.locked_fields.owner} 🔒\n⏰ अंतिम समय सीमा: ${meaningPacket.locked_fields.deadline} 🔒\n⚠️ शर्त: ${meaningPacket.locked_fields.conditions.join(", ") || "लागू नहीं"} 🔒\n🎯 स्थिति: सत्यापित (शून्य त्रुटि)`,
+        native_memo: `[कार्य निर्देश] ${meaningPacket.action}\n[जिम्मेदार] ${meaningPacket.locked_fields.owner} [Locked]\n[अंतिम समय सीमा] ${meaningPacket.locked_fields.deadline} [Locked]\n[शर्त] ${meaningPacket.locked_fields.conditions.join(", ") || "लागू नहीं"} [Locked]\n[स्थिति] सत्यापित (शून्य त्रुटि)`,
       },
       {
         language: "ja",
         languageName: "Japanese (日本語)",
-        flag: "🇯🇵",
+        flag: "JA",
         recipientName: "Kenji (DevOps Core)",
         headline: `タスク: ${meaningPacket.action}`,
         action_rendered: `${meaningPacket.locked_fields.owner}は${meaningPacket.locked_fields.deadline}までに本番環境へのデプロイを完了してください。前提条件: ${meaningPacket.locked_fields.conditions.join("; ")}。`,
@@ -176,7 +176,7 @@ Return ONLY valid JSON matching this exact structure with NO markdown fences:
           condition: meaningPacket.locked_fields.conditions.join("; ") || "全テストパス後",
           priority: "高 (High)",
         },
-        native_memo: `⚡ タスク引き継ぎ: ${meaningPacket.action}\n👤 担当者: ${meaningPacket.locked_fields.owner} 🔒\n⏰ 期限: ${meaningPacket.locked_fields.deadline} 🔒\n⚠️ 前提条件: ${meaningPacket.locked_fields.conditions.join(", ") || "なし"} 🔒\n🎯 状態: 事実ロック検証済み (ドリフト0%)`,
+        native_memo: `[タスク引き継ぎ] ${meaningPacket.action}\n[担当者] ${meaningPacket.locked_fields.owner} [Locked]\n[期限] ${meaningPacket.locked_fields.deadline} [Locked]\n[前提条件] ${meaningPacket.locked_fields.conditions.join(", ") || "なし"} [Locked]\n[状態] 事実ロック検証済み (ドリフト0%)`,
       },
     ];
 

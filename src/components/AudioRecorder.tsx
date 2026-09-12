@@ -334,74 +334,72 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className="w-full space-y-8">
-      {/* Hero Section Headlines matching repo_clone */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-7 space-y-5">
-          <div className="inline-flex items-center gap-2 bg-orange-100 border border-orange-200 text-[#E05315] text-xs font-bold px-3.5 py-1.5 rounded-full">
+    <div className="w-full space-y-6">
+      {/* Studio Workbench Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE2D5] pb-4">
+        <div>
+          <div className="inline-flex items-center gap-2 bg-orange-100 border border-orange-200 text-[#E05315] text-xs font-bold px-3 py-1 rounded-full mb-1.5">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Universal-3.5 Pro · Native Multilingual Code-Switching</span>
+            <span>Voice Intake Console</span>
           </div>
-
-          <h1 className="text-5xl sm:text-6xl font-serif font-semibold tracking-tight text-[#1C1917] leading-[1.08]">
-            You speak once.{' '}
-            <span className="text-[#E05315] italic font-serif block mt-1">
-              We engineer the build.
-            </span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-[#57534E] leading-relaxed max-w-xl">
-            A language should never constrain an idea. Speak in Hindi, Hinglish, Spanish, German, or tech slang — AssemblyAI removes fillers, and Gemini drafts your technical spec and prompt for Cursor/Antigravity.
+          <h2 className="text-2xl sm:text-3xl font-serif font-semibold text-[#1C1917]">
+            Universal-3.5 Pro · Speech Studio
+          </h2>
+          <p className="text-xs sm:text-sm text-[#57534E] mt-0.5 max-w-xl">
+            Record live speech in any of 19 languages, upload an audio file, or click a code-switched preset to generate a build spec.
           </p>
-
-          <div className="flex items-center gap-3 pt-2">
-            <div className="inline-flex items-center gap-2 text-xs text-[#78716C] bg-white border border-[#EAE2D5] px-3.5 py-2 rounded-full shadow-sm">
-              <Globe className="w-4 h-4 text-[#E05315]" />
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                disabled={isRecording || isLoading}
-                className="bg-transparent border-none text-[#1C1917] font-semibold text-xs focus:outline-none cursor-pointer"
-              >
-                <option value="auto">Auto-Detect Language (19 Supported)</option>
-                <option value="hi">Hindi (हिंदी) / Hinglish</option>
-                <option value="en">English (Global)</option>
-                <option value="es">Spanish (Español)</option>
-                <option value="fr">French (Français)</option>
-                <option value="de">German (Deutsch)</option>
-                <option value="it">Italian (Italiano)</option>
-                <option value="ja">Japanese (日本語)</option>
-                <option value="zh">Chinese (中文)</option>
-                <option value="ar">Arabic (العربية)</option>
-                <option value="pt">Portuguese (Português)</option>
-              </select>
-            </div>
-
-            <label className="inline-flex items-center gap-1.5 text-xs text-[#57534E] hover:text-[#1C1917] bg-white border border-[#EAE2D5] px-3.5 py-2 rounded-full cursor-pointer shadow-sm hover:border-[#D4CDBF] transition-all">
-              <Upload className="w-3.5 h-3.5 text-[#E05315]" />
-              <span>Upload Audio</span>
-              <input
-                type="file"
-                accept="audio/*"
-                className="hidden"
-                onChange={handleFileUpload}
-                disabled={isRecording || isLoading}
-              />
-            </label>
-          </div>
         </div>
 
-        {/* Right Column: Hero Audio Intake Card */}
-        <div className="lg:col-span-5">
-          <div className="warm-card rounded-3xl p-8 shadow-xl relative overflow-hidden flex flex-col items-center justify-center text-center space-y-6">
-            
+        {/* Action Controls: Language Selector & Audio Upload */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="inline-flex items-center gap-2 text-xs text-[#78716C] bg-white border border-[#EAE2D5] px-3.5 py-2 rounded-full shadow-sm">
+            <Globe className="w-4 h-4 text-[#E05315]" />
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              disabled={isRecording || isLoading}
+              className="bg-transparent border-none text-[#1C1917] font-semibold text-xs focus:outline-none cursor-pointer"
+            >
+              <option value="auto">Auto-Detect Language (19 Supported)</option>
+              <option value="hi">Hindi (हिंदी) / Hinglish</option>
+              <option value="en">English (Global)</option>
+              <option value="es">Spanish (Español)</option>
+              <option value="fr">French (Français)</option>
+              <option value="de">German (Deutsch)</option>
+              <option value="it">Italian (Italiano)</option>
+              <option value="ja">Japanese (日本語)</option>
+              <option value="zh">Chinese (中文)</option>
+              <option value="ar">Arabic (العربية)</option>
+              <option value="pt">Portuguese (Português)</option>
+            </select>
+          </div>
+
+          <label className="inline-flex items-center gap-1.5 text-xs text-[#57534E] hover:text-[#1C1917] bg-white border border-[#EAE2D5] px-3.5 py-2 rounded-full cursor-pointer shadow-sm hover:border-[#D4CDBF] transition-all">
+            <Upload className="w-3.5 h-3.5 text-[#E05315]" />
+            <span>Upload Audio</span>
+            <input
+              type="file"
+              accept="audio/*"
+              className="hidden"
+              onChange={handleFileUpload}
+              disabled={isRecording || isLoading}
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* Main Studio Console: Live Recorder on Left, 4 Presets on Right */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left Column (5 cols): Live Recorder Card */}
+        <div className="lg:col-span-5 flex">
+          <div className="warm-card rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden flex flex-col items-center justify-center text-center space-y-5 w-full">
             {/* Top Badge */}
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C] bg-[#FAF8F3] px-3 py-1 rounded-full border border-[#EAE2D5]">
-              {isRecording ? 'LIVE RECORDING · SPEAK FREELY' : 'VOICE INTAKE READY'}
+              {isRecording ? 'LIVE RECORDING · SPEAK FREELY' : 'PUSH TO TALK'}
             </span>
 
             {/* Dynamic Waveform Visualizer */}
-            <div className="flex items-center justify-center gap-1 h-14 w-full px-2">
+            <div className="flex items-center justify-center gap-1 h-12 w-full px-2">
               {waveformBars.map((h, i) => (
                 <div
                   key={i}
@@ -479,6 +477,53 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             )}
           </div>
         </div>
+
+        {/* Right Column (7 cols): Instant Demo Presets in 2x2 Grid */}
+        <div className="lg:col-span-7 flex flex-col justify-between space-y-3">
+          <div className="flex items-center justify-between border-b border-[#EAE2D5] pb-2">
+            <div className="flex items-center gap-2">
+              <Volume2 className="w-4 h-4 text-[#E05315]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#78716C]">
+                Instant Code-Switching Demo Clips (No Mic Needed)
+              </span>
+            </div>
+            <span className="text-[11px] text-[#78716C]">1-Click Synthesis</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 flex-1">
+            {DEMO_PRESETS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => handleTriggerPreset(p)}
+                disabled={isLoading || isRecording}
+                className={`text-left p-4 rounded-2xl border transition-all hover:shadow-md flex flex-col justify-between ${
+                  selectedPreset === p.id
+                    ? 'bg-orange-50 border-[#E05315] shadow-sm'
+                    : 'bg-white hover:bg-[#FAF8F3] border-[#EAE2D5]'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[10px] font-mono font-bold uppercase text-[#78716C] bg-[#FAF8F3] border border-[#EAE2D5] px-2 py-0.5 rounded-md">
+                      {p.langLabel}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold uppercase text-[#E05315] bg-orange-100 px-2 py-0.5 rounded-full">
+                      {p.languagePin.toUpperCase()}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-xs text-[#1C1917]">{p.label}</h3>
+                  <p className="text-[11px] text-[#57534E] mt-1.5 line-clamp-3 leading-relaxed">
+                    "{p.sampleText}"
+                  </p>
+                </div>
+                <div className="pt-2 text-[10px] text-[#E05315] font-semibold flex items-center gap-1">
+                  <span>Synthesize with Gemini</span>
+                  <ArrowRight className="w-3 h-3" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Error Banner */}
@@ -497,47 +542,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           </button>
         </div>
       )}
-
-      {/* Instant Demo Presets matching repo_clone Cards */}
-      <div className="space-y-3 pt-4">
-        <div className="flex items-center justify-between border-b border-[#EAE2D5] pb-2">
-          <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-[#E05315]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#78716C]">
-              Instant Code-Switching Demo Clips (1-Click Synthesis)
-            </span>
-          </div>
-          <span className="text-xs text-[#78716C] hidden sm:inline">Try without microphone</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {DEMO_PRESETS.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => handleTriggerPreset(p)}
-              disabled={isLoading || isRecording}
-              className={`text-left p-4 rounded-2xl border transition-all hover:shadow-md ${
-                selectedPreset === p.id
-                  ? 'bg-orange-50 border-[#E05315] shadow-sm'
-                  : 'bg-white hover:bg-[#FAF8F3] border-[#EAE2D5]'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#78716C] bg-[#FAF8F3] border border-[#EAE2D5] px-2 py-0.5 rounded-md">
-                  {p.langLabel}
-                </span>
-                <span className="text-[10px] font-mono font-bold uppercase text-[#E05315] bg-orange-100 px-2 py-0.5 rounded-full">
-                  {p.languagePin.toUpperCase()}
-                </span>
-              </div>
-              <h3 className="font-bold text-xs text-[#1C1917]">{p.label}</h3>
-              <p className="text-[11px] text-[#57534E] mt-1 line-clamp-2 leading-relaxed">
-                "{p.sampleText}"
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

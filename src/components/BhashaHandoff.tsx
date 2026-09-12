@@ -146,7 +146,7 @@ export const BhashaHandoff: React.FC<BhashaHandoffProps> = ({
   };
 
   const handleDispatchEmail = (card: LocalizedTaskCard) => {
-    const subject = encodeURIComponent(`[Bhasha 🔒 Zero-Drift Task] ${card.headline}`);
+    const subject = encodeURIComponent(`[IdeaForge Zero-Drift Task] ${card.headline}`);
     const body = encodeURIComponent(card.native_memo);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
   };
@@ -174,7 +174,7 @@ export const BhashaHandoff: React.FC<BhashaHandoffProps> = ({
         </h1>
 
         <p className="text-base text-[#57534E] max-w-3xl leading-relaxed">
-          Traditional translation loses critical dates, names, and prerequisites during handoffs (e.g. 4 PM becomes 4 AM). The system extracts an intermediate <strong>Meaning Packet</strong> with locked facts, guaranteeing Rahul, Kenji, and Alex receive culturally natural instructions from the exact same source of truth.
+          Standard translation algorithms distort technical constraints, deadlines, and ownership across distributed sprints. IdeaForge solves this by extracting an immutable <strong>Canonical Meaning Packet</strong> — locking invariant project facts so engineers worldwide receive culturally fluent task briefs derived from a single, verified source of truth.
         </p>
       </div>
 
@@ -243,7 +243,7 @@ export const BhashaHandoff: React.FC<BhashaHandoffProps> = ({
         </div>
       )}
 
-      {/* Canonical Meaning Packet (🔒 Invariant Single Source of Truth) */}
+      {/* Canonical Meaning Packet (Invariant Single Source of Truth) */}
       {packet && (
         <div className="space-y-6">
           <div className="warm-card rounded-3xl p-6 sm:p-8 shadow-md border-2 border-orange-200 space-y-4 relative overflow-hidden">
