@@ -17,26 +17,7 @@ import {
   probeGeminiModelAliases,
   probeGeminiMultilingualInstruction,
 } from "@/lib/gemini-probes";
-
-// Persist on globalThis across Next.js API route invocations
-const globalForDiagnostics = globalThis as unknown as {
-  __latestDiagnosticsRun: {
-    timestamp: string;
-    totalProbes: number;
-    passCount: number;
-    anomalyCount: number;
-    errorCount: number;
-    probes: ProbeResult[];
-  } | null;
-};
-
-if (!globalForDiagnostics.__latestDiagnosticsRun) {
-  globalForDiagnostics.__latestDiagnosticsRun = null;
-}
-
-export function getLatestDiagnosticsRun() {
-  return globalForDiagnostics.__latestDiagnosticsRun;
-}
+import { setLatestDiagnosticsRun, getLatestDiagnosticsRun } from "@/lib/diagnostics-store";
 
 export async function POST(req: NextRequest) {
   try {
@@ -110,7 +91,7 @@ export async function POST(req: NextRequest) {
       errorCount,
       probes: results,
     };
-    globalForDiagnostics.__latestDiagnosticsRun = latestProbeRun;
+    setLatestDiagnosticsRun(latestProbeRun);
 
     return NextResponse.json({
       success: true,
@@ -132,8 +113,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  if (!latestProbeRun) {
+  const latest = getLatestDiagnosticsRun();
+  if (!latest) {
     return NextResponse.json({ message: "No diagnostics run has occurred yet. Click 'Run Diagnostics' to test APIs." });
   }
-  return NextResponse.json(latestProbeRun);
+  return NextResponse.json(latest);
 }

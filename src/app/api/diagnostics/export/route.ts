@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getLatestDiagnosticsRun } from "../run/route";
+import { getLatestDiagnosticsRun } from "@/lib/diagnostics-store";
 
 export async function GET(req: NextRequest) {
   try {
-    const globalForDiagnostics = globalThis as unknown as {
-      __latestDiagnosticsRun: any;
-    };
-    const latest = globalForDiagnostics.__latestDiagnosticsRun;
+    const latest = getLatestDiagnosticsRun();
 
     if (!latest || latest.probes.length === 0) {
       return NextResponse.json({
