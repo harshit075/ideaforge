@@ -44,7 +44,7 @@ async function callGeminiRaw(apiKey: string, model: string, prompt: string, expe
  */
 export async function probeGeminiAuth(apiKey: string): Promise<ProbeResult> {
   const invalidKey = "AIzaSyFakeKey_1234567890ABCDEF";
-  const { status, statusText, body, latencyMs } = await callGeminiRaw(invalidKey, "gemini-1.5-flash", "Hello");
+  const { status, statusText, body, latencyMs } = await callGeminiRaw(invalidKey, "gemini-flash-lite-latest", "Hello");
 
   // Google APIs typically return 400 Bad Request with API_KEY_INVALID error code
   const isExpected400 = status === 400 && (body?.error?.message?.includes("API key not valid") || body?.error?.status === "INVALID_ARGUMENT");
@@ -96,7 +96,7 @@ export async function probeGeminiJsonReliability(apiKey: string): Promise<ProbeR
   const errors: string[] = [];
 
   for (let i = 0; i < runs; i++) {
-    const res = await callGeminiRaw(apiKey, "gemini-1.5-flash", prompt, true);
+    const res = await callGeminiRaw(apiKey, "gemini-flash-lite-latest", prompt, true);
     totalLatency += res.latencyMs;
     const textContent = res.body?.candidates?.[0]?.content?.parts?.[0]?.text;
     try {
@@ -206,7 +206,7 @@ export async function probeGeminiMultilingualInstruction(apiKey: string): Promis
   const prompt = `Input idea (in Hindi): "${hindiInput}".
 Task: Return JSON with "title" (in English) and "codingAgentPrompt" (in clear, professional English for Claude/Cursor). No Hindi words in the output.`;
 
-  const res = await callGeminiRaw(apiKey, "gemini-1.5-flash", prompt, true);
+  const res = await callGeminiRaw(apiKey, "gemini-flash-lite-latest", prompt, true);
   const textContent = res.body?.candidates?.[0]?.content?.parts?.[0]?.text;
   let parsed: any = null;
   let hasDevanagari = false;

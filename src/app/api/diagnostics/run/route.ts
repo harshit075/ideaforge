@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     const geminiKey =
       req.headers.get("x-gemini-key") ||
       process.env.GEMINI_API_KEY ||
+      process.env.GEMINI_API ||
       "";
 
     const probesToRun: (() => Promise<ProbeResult>)[] = [];

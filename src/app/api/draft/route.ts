@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
   try {
     const geminiKey =
       req.headers.get("x-gemini-key") ||
-      process.env.GEMINI_API_KEY;
+      process.env.GEMINI_API_KEY ||
+      process.env.GEMINI_API;
 
     const { transcript, cleanText, previousSpec, refinementNotes } = await req.json();
 
@@ -124,7 +125,7 @@ Synthesize a comprehensive build specification and coding agent prompt for this 
     },
   };
 
-  const model = "gemini-1.5-flash";
+  const model = "gemini-flash-lite-latest";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const res = await fetch(url, {
