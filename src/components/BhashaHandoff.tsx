@@ -31,9 +31,9 @@ interface BhashaHandoffProps {
 const BHASHA_SAMPLES = [
   {
     id: 'deployment-hinglish',
-    label: 'Hinglish Deployment (Rahul)',
-    spoken: 'Kal Rahul deployment kare, but only after tests pass — deadline 4 PM IST.',
-    description: 'Assignee Rahul, precondition tests passing, 4:00 PM IST',
+    label: 'Hinglish Release Gate (Rahul)',
+    spoken: 'Rahul production deployment execute karega, but only after all test suites pass — hard cutoff tomorrow 5:00 PM IST.',
+    description: 'Assignee Rahul, precondition all tests pass, deadline tomorrow 5:00 PM IST',
   },
   {
     id: 'hotfix-prod',
@@ -53,7 +53,7 @@ export const BhashaHandoff: React.FC<BhashaHandoffProps> = ({
   geminiKeyOverride,
 }) => {
   const [transcriptInput, setTranscriptInput] = useState(
-    'Kal Rahul deployment kare, but only after tests pass — deadline 4 PM IST.'
+    'Rahul production deployment execute karega, but only after all test suites pass — hard cutoff tomorrow 5:00 PM IST.'
   );
   const [isLoading, setIsLoading] = useState(false);
   const [packet, setPacket] = useState<MeaningPacket | null>(null);
@@ -195,7 +195,7 @@ export const BhashaHandoff: React.FC<BhashaHandoffProps> = ({
             type="text"
             value={transcriptInput}
             onChange={(e) => setTranscriptInput(e.target.value)}
-            placeholder="e.g. 'Kal Rahul deployment kare, but only after tests pass — deadline 4 PM IST.'"
+            placeholder="e.g. 'Rahul production deployment execute karega, but only after all test suites pass — hard cutoff tomorrow 5:00 PM IST.'"
             disabled={isLoading}
             className="flex-1 px-4 py-3.5 bg-[#FAF8F3] border border-[#EAE2D5] rounded-2xl text-sm text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#E05315] transition-all"
           />
