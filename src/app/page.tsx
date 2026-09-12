@@ -8,6 +8,7 @@ import { AudioRecorder } from '@/components/AudioRecorder';
 import { SpecDisplay } from '@/components/SpecDisplay';
 import { VersionHistory, VersionSnapshot } from '@/components/VersionHistory';
 import { DiagnosticsView } from '@/components/DiagnosticsView';
+import { YoutubeTranscriber } from '@/components/YoutubeTranscriber';
 import { SettingsModal } from '@/components/SettingsModal';
 import { BuildSpec } from '@/app/api/draft/route';
 import {
@@ -21,10 +22,11 @@ import {
   Mic,
   Cpu,
   ShieldCheck,
+  Youtube,
 } from 'lucide-react';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'studio' | 'diagnostics'>('studio');
+  const [activeTab, setActiveTab] = useState<'studio' | 'youtube' | 'diagnostics'>('studio');
   const [hasAssemblyAiKey, setHasAssemblyAiKey] = useState(true);
   const [hasGeminiKey, setHasGeminiKey] = useState(false);
   const [assemblyKeyOverride, setAssemblyKeyOverride] = useState('');
@@ -308,7 +310,27 @@ export default function Home() {
           </div>
         )}
 
-        {/* View 2: API Diagnostics & Bug Hunter */}
+        {/* View 2: YouTube Transcriber across 19 Languages */}
+        {activeTab === 'youtube' && (
+          <div className="animate-fadeIn">
+            <YoutubeTranscriber
+              geminiKeyOverride={geminiKeyOverride}
+              onSynthesizeSpecFromVideo={(transcriptText) => {
+                setActiveTab('studio');
+                handleTranscribeComplete({
+                  text: transcriptText,
+                  llm_response: transcriptText,
+                  confidence: 0.98,
+                  audio_duration_ms: 60000,
+                  request_time_ms: 1200,
+                  session_id: 'youtube-video-import',
+                });
+              }}
+            />
+          </div>
+        )}
+
+        {/* View 3: API Diagnostics & Bug Hunter */}
         {activeTab === 'diagnostics' && (
           <div className="animate-fadeIn">
             <DiagnosticsView

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Sparkles, Terminal, Activity, Settings, Cpu, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'studio' | 'diagnostics';
-  setActiveTab: (tab: 'studio' | 'diagnostics') => void;
+  activeTab: 'studio' | 'youtube' | 'diagnostics';
+  setActiveTab: (tab: 'studio' | 'youtube' | 'diagnostics') => void;
   hasAssemblyAiKey: boolean;
   hasGeminiKey: boolean;
   onOpenSettings: () => void;
@@ -42,29 +42,41 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="bg-white/90 backdrop-blur border border-[#EAE2D5] p-1.5 rounded-full inline-flex items-center gap-1 shadow-sm">
           <button
             onClick={() => setActiveTab('studio')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
               activeTab === 'studio'
                 ? 'bg-[#1C1917] text-white shadow-sm font-semibold'
                 : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
             }`}
           >
             <Cpu className="w-3.5 h-3.5" />
-            <span>Build Studio</span>
+            <span>Studio</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('diagnostics')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all relative ${
-              activeTab === 'diagnostics'
+            onClick={() => setActiveTab('youtube')}
+            className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
+              activeTab === 'youtube'
                 ? 'bg-[#E05315] text-white shadow-sm font-semibold'
                 : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
             }`}
           >
+            <span className="text-red-500 font-black">▶</span>
+            <span>YouTube 19-Lang</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('diagnostics')}
+            className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all relative ${
+              activeTab === 'diagnostics'
+                ? 'bg-[#1C1917] text-white shadow-sm font-semibold'
+                : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
+            }`}
+          >
             <Activity className="w-3.5 h-3.5" />
-            <span>API Diagnostics</span>
+            <span>Diagnostics</span>
             {anomalyCount > 0 && (
               <span className={`px-1.5 py-0.2 text-[10px] font-bold rounded-full ml-0.5 ${
-                activeTab === 'diagnostics' ? 'bg-white text-[#E05315]' : 'bg-orange-200 text-[#E05315]'
+                activeTab === 'diagnostics' ? 'bg-[#E05315] text-white' : 'bg-orange-200 text-[#E05315]'
               }`}>
                 {anomalyCount}
               </span>
