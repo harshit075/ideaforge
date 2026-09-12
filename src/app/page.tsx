@@ -9,6 +9,7 @@ import { SpecDisplay } from '@/components/SpecDisplay';
 import { VersionHistory, VersionSnapshot } from '@/components/VersionHistory';
 import { DiagnosticsView } from '@/components/DiagnosticsView';
 import { YoutubeTranscriber } from '@/components/YoutubeTranscriber';
+import { BhashaHandoff } from '@/components/BhashaHandoff';
 import { SettingsModal } from '@/components/SettingsModal';
 import { BuildSpec } from '@/app/api/draft/route';
 import {
@@ -23,10 +24,11 @@ import {
   Cpu,
   ShieldCheck,
   Youtube,
+  Lock,
 } from 'lucide-react';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'studio' | 'youtube' | 'diagnostics'>('studio');
+  const [activeTab, setActiveTab] = useState<'studio' | 'youtube' | 'bhasha' | 'diagnostics'>('studio');
   const [hasAssemblyAiKey, setHasAssemblyAiKey] = useState(true);
   const [hasGeminiKey, setHasGeminiKey] = useState(false);
   const [assemblyKeyOverride, setAssemblyKeyOverride] = useState('');
@@ -310,7 +312,17 @@ export default function Home() {
           </div>
         )}
 
-        {/* View 2: YouTube Transcriber across 19 Languages */}
+        {/* View 2: Bhasha Zero-Drift Meaning Packet & Team Orchestration */}
+        {activeTab === 'bhasha' && (
+          <div className="animate-fadeIn">
+            <BhashaHandoff
+              geminiKeyOverride={geminiKeyOverride}
+              assemblyKeyOverride={assemblyKeyOverride}
+            />
+          </div>
+        )}
+
+        {/* View 3: YouTube Transcriber across 19 Languages */}
         {activeTab === 'youtube' && (
           <div className="animate-fadeIn">
             <YoutubeTranscriber
@@ -330,7 +342,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* View 3: API Diagnostics & Bug Hunter */}
+        {/* View 4: API Diagnostics & Bug Hunter */}
         {activeTab === 'diagnostics' && (
           <div className="animate-fadeIn">
             <DiagnosticsView

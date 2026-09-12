@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Sparkles, Terminal, Activity, Settings, Cpu, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'studio' | 'youtube' | 'diagnostics';
-  setActiveTab: (tab: 'studio' | 'youtube' | 'diagnostics') => void;
+  activeTab: 'studio' | 'youtube' | 'bhasha' | 'diagnostics';
+  setActiveTab: (tab: 'studio' | 'youtube' | 'bhasha' | 'diagnostics') => void;
   hasAssemblyAiKey: boolean;
   hasGeminiKey: boolean;
   onOpenSettings: () => void;
@@ -53,10 +53,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
+            onClick={() => setActiveTab('bhasha')}
+            className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
+              activeTab === 'bhasha'
+                ? 'bg-[#E05315] text-white shadow-sm font-semibold'
+                : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
+            }`}
+          >
+            <span className="text-orange-500 font-black">🔒</span>
+            <span>Bhasha Team Relay</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('youtube')}
             className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
               activeTab === 'youtube'
-                ? 'bg-[#E05315] text-white shadow-sm font-semibold'
+                ? 'bg-[#1C1917] text-white shadow-sm font-semibold'
                 : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#FAF8F3]'
             }`}
           >
