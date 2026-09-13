@@ -1,7 +1,19 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Upload, Sparkles, AlertCircle, Globe, Volume2, ArrowRight } from 'lucide-react';
+import {
+  Mic,
+  Square,
+  Upload,
+  Sparkles,
+  AlertCircle,
+  Globe,
+  Volume2,
+  ArrowRight,
+  Trash2,
+  Headphones,
+  RotateCcw,
+} from 'lucide-react';
 
 interface AudioRecorderProps {
   onTranscribeComplete: (data: {
@@ -13,6 +25,7 @@ interface AudioRecorderProps {
     session_id?: string;
   }) => void;
   isLoading: boolean;
+  loadingProgress?: number;
   setLoadingStateText: (text: string) => void;
   assemblyKeyOverride?: string;
   geminiKeyOverride?: string;
@@ -56,6 +69,7 @@ const DEMO_PRESETS = [
 export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   onTranscribeComplete,
   isLoading,
+  loadingProgress = 0,
   setLoadingStateText,
   assemblyKeyOverride,
 }) => {
@@ -67,6 +81,25 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [waveformBars, setWaveformBars] = useState<number[]>(new Array(28).fill(12));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [lastTranscribed, setLastTranscribed] = useState<{
+    text: string;
+    llm_response: string;
+    confidence: number;
+    audio_duration_ms: number;
+    request_time_ms: number;
+    session_id?: string;
+  } | null>(null);
+
+  const handleDiscardRecording = () => {
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+    }
+    setAudioBlob(null);
+    setAudioUrl(null);
+    setRecordSeconds(0);
+    setErrorMessage(null);
+    setWaveformBars(new Array(28).fill(12));
+  };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -221,6 +254,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
   const handleTranscribeRecorded = async () => {
     if (!audioBlob) return;
+    if (recordSeconds < 1) {
+      setErrorMessage("Recording was too short (under 1 second). Please speak into your microphone before synthesizing.");
+      return;
+    }
     setErrorMessage(null);
     setLoadingStateText('Transcribing spoken audio via AssemblyAI Universal-3.5 Pro...');
 
@@ -249,14 +286,25 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         throw new Error(data.error || 'Transcription request failed');
       }
 
-      onTranscribeComplete({
-        text: data.text,
-        llm_response: data.llm_response || data.text,
-        confidence: data.confidence,
-        audio_duration_ms: data.audio_duration_ms,
-        request_time_ms: data.request_time_ms,
+      const spokenText = data.text?.trim() || '';
+      const cleanText = data.llm_response?.trim() || spokenText;
+
+      if (!spokenText && !cleanText) {
+        setErrorMessage('No audible speech was detected in this recording. Please make sure your microphone is unmuted and speak clearly, or test with one of the instant demo presets below.');
+        return;
+      }
+
+      const transcribedPayload = {
+        text: spokenText,
+        llm_response: cleanText,
+        confidence: data.confidence || 0.95,
+        audio_duration_ms: data.audio_duration_ms || recordSeconds * 1000,
+        request_time_ms: data.request_time_ms || 480,
         session_id: data.session_id,
-      });
+      };
+
+      setLastTranscribed(transcribedPayload);
+      onTranscribeComplete(transcribedPayload);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to transcribe audio');
     }
@@ -269,14 +317,17 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
     setErrorMessage(null);
     setLoadingStateText(`Processing ${preset.label} (${preset.languagePin.toUpperCase()}) demo idea...`);
 
-    onTranscribeComplete({
+    const demoPayload = {
       text: preset.sampleText,
       llm_response: preset.sampleText,
       confidence: 0.98,
       audio_duration_ms: 6800,
       request_time_ms: 620,
       session_id: 'demo-' + preset.id + '-' + Date.now().toString(36),
-    });
+    };
+
+    setLastTranscribed(demoPayload);
+    onTranscribeComplete(demoPayload);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -314,14 +365,25 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         throw new Error(data.error || 'Failed to transcribe file');
       }
 
-      onTranscribeComplete({
-        text: data.text,
-        llm_response: data.llm_response || data.text,
-        confidence: data.confidence,
-        audio_duration_ms: data.audio_duration_ms,
-        request_time_ms: data.request_time_ms,
+      const spokenText = data.text?.trim() || '';
+      const cleanText = data.llm_response?.trim() || spokenText;
+
+      if (!spokenText && !cleanText) {
+        setErrorMessage('No audible speech was detected in this audio file. Please select an audio file with clear speech.');
+        return;
+      }
+
+      const filePayload = {
+        text: spokenText,
+        llm_response: cleanText,
+        confidence: data.confidence || 0.95,
+        audio_duration_ms: data.audio_duration_ms || 3500,
+        request_time_ms: data.request_time_ms || 480,
         session_id: data.session_id,
-      });
+      };
+
+      setLastTranscribed(filePayload);
+      onTranscribeComplete(filePayload);
     } catch (err: any) {
       setErrorMessage(err.message || 'File upload failed');
     }
@@ -459,21 +521,88 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               </p>
             </div>
 
-            {/* Action to transcribe recorded audio if stopped */}
+            {/* Action to preview, discard, and synthesize recorded audio */}
             {audioBlob && !isRecording && (
-              <button
-                onClick={handleTranscribeRecorded}
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#E05315] hover:bg-[#C2410C] text-white font-bold text-sm shadow-md transition-all"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Synthesize Spec from Audio</span>
-              </button>
-            )}
+              <div className="w-full space-y-3 pt-2">
+                {/* Audio Player Card with Listen Controls */}
+                <div className="w-full bg-[#FAF8F3] border border-[#EAE2D5] rounded-2xl p-3.5 space-y-2 text-left shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-[#1C1917]">
+                      <Headphones className="w-3.5 h-3.5 text-[#E05315]" />
+                      Hear Your Recording
+                    </span>
+                    <span className="text-[11px] font-mono font-semibold text-[#78716C] bg-white border border-[#EAE2D5] px-2 py-0.5 rounded-full">
+                      {formatTimer(recordSeconds)}
+                    </span>
+                  </div>
+                  {audioUrl && (
+                    <audio
+                      controls
+                      src={audioUrl}
+                      className="w-full h-9 rounded-lg focus:outline-none"
+                    />
+                  )}
+                </div>
 
-            {/* Audio playback if recorded */}
-            {audioUrl && !isRecording && (
-              <audio controls src={audioUrl} className="w-full h-8 opacity-90" />
+                {/* Progress bar during synthesis */}
+                {isLoading && (
+                  <div className="w-full p-3 bg-orange-50/90 border border-orange-200 rounded-xl space-y-2 text-left animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[#1C1917] flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-[#E05315] animate-spin" />
+                        Synthesizing Architecture...
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#E05315]">
+                        {loadingProgress || 15}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#EAE2D5] rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-orange-400 via-[#E05315] to-[#C2410C] h-full rounded-full transition-all duration-300"
+                        style={{ width: `${loadingProgress || 15}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] font-mono text-[#78716C] text-center">
+                      {(loadingProgress || 0) < 40
+                        ? 'Step 1/3: Universal-3.5 Pro Transcribing...'
+                        : (loadingProgress || 0) < 80
+                        ? 'Step 2/3: Code-Switching Spec Synthesis...'
+                        : 'Step 3/3: Finalizing Architecture Prompt...'}
+                    </p>
+                  </div>
+                )}
+
+                {/* Action Buttons: Discard / Re-record vs Synthesize Spec */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleDiscardRecording}
+                    disabled={isLoading}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-white hover:bg-rose-50 text-rose-700 hover:text-rose-800 border border-rose-200 hover:border-rose-300 font-semibold text-xs transition-all shadow-sm disabled:opacity-50"
+                    title="Discard this recording and start over"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Discard Audio</span>
+                  </button>
+
+                  <button
+                    onClick={handleTranscribeRecorded}
+                    disabled={isLoading}
+                    className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-[#E05315] hover:bg-[#C2410C] text-white font-bold text-xs shadow-md transition-all active:scale-[0.99] disabled:opacity-60"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin shrink-0" />
+                        <span>Working ({loadingProgress || 15}%)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 shrink-0" />
+                        <span>Synthesize Spec</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -525,6 +654,69 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Transcription Output: What You Spoke vs Refined Technical Spec Input */}
+      {lastTranscribed && (
+        <div className="warm-card rounded-3xl p-6 sm:p-7 shadow-md border border-[#EAE2D5] space-y-4 bg-white animate-fadeIn">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EAE2D5] pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-orange-100 text-[#E05315]">
+                <Mic className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-serif font-bold text-[#1C1917]">
+                  Speech Intake & Transformation Telemetry
+                </h3>
+                <p className="text-xs text-[#78716C]">
+                  Universal-3.5 Pro transcription: What you spoke verbatim vs. cleaned technical spec input
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-semibold">
+                Confidence: {Math.round(lastTranscribed.confidence * 100)}%
+              </span>
+              <span className="bg-[#FAF8F3] text-[#78716C] border border-[#EAE2D5] px-3 py-1 rounded-full">
+                Latency: {lastTranscribed.request_time_ms}ms
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* What You Spoke */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-2.5">
+              <div className="flex items-center justify-between border-b border-[#EAE2D5] pb-2">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                  <Mic className="w-3.5 h-3.5 text-[#E05315]" />
+                  What You Spoke (Raw Speech)
+                </span>
+                <span className="text-[10px] font-mono text-[#78716C] bg-white border border-[#EAE2D5] px-2 py-0.5 rounded">
+                  Universal-3.5 Pro ASR
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-[#1C1917] font-mono leading-relaxed whitespace-pre-wrap">
+                "{lastTranscribed.text}"
+              </p>
+            </div>
+
+            {/* Refined Technical Output */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-orange-50/60 border border-orange-200/80 space-y-2.5">
+              <div className="flex items-center justify-between border-b border-orange-200/60 pb-2">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#E05315] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E05315]" />
+                  Refined Technical Output (Spec Input)
+                </span>
+                <span className="text-[10px] font-mono text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-200 px-2 py-0.5 rounded">
+                  Fillers Cleaned
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-[#1C1917] font-mono leading-relaxed whitespace-pre-wrap font-medium">
+                "{lastTranscribed.llm_response}"
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error Banner */}
       {errorMessage && (

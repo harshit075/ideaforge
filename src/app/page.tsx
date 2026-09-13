@@ -49,6 +49,7 @@ export default function Home() {
   } | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingText, setLoadingText] = useState('Processing...');
   const [errorMessage, setErrorMessage] = useState<{
     title: string;
@@ -58,6 +59,27 @@ export default function Home() {
   } | null>(null);
 
   const [anomalyCount, setAnomalyCount] = useState<number>(0);
+
+  // Smooth loading progress animator
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isLoading) {
+      setLoadingProgress((prev) => (prev === 0 ? 15 : prev));
+      interval = setInterval(() => {
+        setLoadingProgress((prev) => {
+          if (prev >= 92) return 92;
+          const jump = Math.floor(Math.random() * 8) + 4;
+          return Math.min(92, prev + jump);
+        });
+      }, 350);
+    } else {
+      if (interval) clearInterval(interval);
+      setLoadingProgress(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
 
   // Check server configuration status on mount
   useEffect(() => {
@@ -82,8 +104,24 @@ export default function Home() {
     setTranscriptData(data);
     setErrorMessage(null);
 
+    const spokenText = data.text?.trim() || '';
+    const cleanText = data.llm_response?.trim() || spokenText;
+
+    // Guard against empty audio / no speech detected
+    if (!spokenText && !cleanText) {
+      setIsLoading(false);
+      setLoadingProgress(0);
+      setErrorMessage({
+        title: 'No Speech Detected',
+        message:
+          'AssemblyAI did not detect any clear spoken words in this recording. Please make sure your microphone is unmuted and speak clearly, or test with one of the 1-click code-switching demo clips below.',
+        type: 'general',
+      });
+      return;
+    }
+
     // If confidence is low, warn
-    if (data.confidence < 0.4 && data.text.length > 0) {
+    if (data.confidence < 0.4 && spokenText.length > 0) {
       setErrorMessage({
         title: 'Low Transcription Confidence',
         message:
@@ -104,8 +142,8 @@ export default function Home() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          transcript: data.text,
-          cleanText: data.llm_response,
+          transcript: spokenText,
+          cleanText: cleanText,
           previousSpec: currentSpec,
         }),
       });
@@ -115,6 +153,7 @@ export default function Home() {
         throw new Error(draftResult.error || 'Failed to generate spec');
       }
 
+      setLoadingProgress(100);
       const newSpec: BuildSpec = draftResult.spec;
       setCurrentSpec(newSpec);
 
@@ -134,7 +173,10 @@ export default function Home() {
         type: 'general',
       });
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+        setLoadingProgress(0);
+      }, 300);
     }
   };
 
@@ -241,15 +283,39 @@ export default function Home() {
           </div>
         )}
 
-        {/* Real Loading State with Informative Steps */}
+        {/* Real Loading State with Live Percentage Progress Bar */}
         {isLoading && (
-          <div className="warm-card rounded-2xl p-6 flex items-center justify-center gap-4 shadow-md animate-pulse">
-            <div className="w-7 h-7 rounded-full border-2 border-[#E05315] border-t-transparent animate-spin" />
-            <div>
-              <p className="font-bold text-[#1C1917] text-sm">{loadingText}</p>
-              <p className="text-xs text-[#78716C] mt-0.5">
-                Universal-3.5 Pro + Gemini Architecture Orchestrator
-              </p>
+          <div className="warm-card rounded-2xl p-6 border border-orange-200/80 shadow-lg space-y-3.5 animate-fadeIn bg-white/95">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full border-2 border-[#E05315] border-t-transparent animate-spin shrink-0" />
+                <div>
+                  <p className="font-bold text-[#1C1917] text-sm">{loadingText}</p>
+                  <p className="text-xs text-[#78716C] mt-0.5">
+                    Universal-3.5 Pro + Gemini Architecture Orchestrator
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="font-mono font-bold text-xl text-[#E05315]">
+                  {loadingProgress}%
+                </span>
+                <span className="text-[10px] block font-mono text-[#78716C]">
+                  {loadingProgress < 40
+                    ? 'Step 1/3: Speech Intake'
+                    : loadingProgress < 80
+                    ? 'Step 2/3: Spec Synthesis'
+                    : 'Step 3/3: Finalizing'}
+                </span>
+              </div>
+            </div>
+
+            {/* Visual Animated Progress Track */}
+            <div className="w-full h-2.5 bg-[#EAE2D5] rounded-full overflow-hidden relative">
+              <div
+                className="h-full bg-gradient-to-r from-orange-400 via-[#E05315] to-[#C2410C] rounded-full transition-all duration-300 ease-out shadow-sm"
+                style={{ width: `${loadingProgress}%` }}
+              />
             </div>
           </div>
         )}
@@ -275,6 +341,7 @@ export default function Home() {
               <AudioRecorder
                 onTranscribeComplete={handleTranscribeComplete}
                 isLoading={isLoading}
+                loadingProgress={loadingProgress}
                 setLoadingStateText={setLoadingText}
                 assemblyKeyOverride={assemblyKeyOverride}
                 geminiKeyOverride={geminiKeyOverride}

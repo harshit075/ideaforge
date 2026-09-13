@@ -38,14 +38,18 @@ export async function POST(req: NextRequest) {
 
     const { transcript, cleanText, previousSpec, refinementNotes } = await req.json();
 
-    if (!transcript && !cleanText && !refinementNotes) {
+    const trimmedTranscript = (transcript || "").trim();
+    const trimmedClean = (cleanText || "").trim();
+    const trimmedNotes = (refinementNotes || "").trim();
+
+    if (!trimmedTranscript && !trimmedClean && !trimmedNotes) {
       return NextResponse.json(
-        { error: "No input transcript or refinement text provided.", type: "bad_request" },
+        { error: "No input transcript or refinement text provided. Please provide spoken audio or text description.", type: "bad_request" },
         { status: 400 }
       );
     }
 
-    const inputContent = cleanText || transcript || refinementNotes;
+    const inputContent = trimmedClean || trimmedTranscript || trimmedNotes;
 
     // If a valid GEMINI_API_KEY is available, call Gemini 1.5 Flash
     if (geminiKey && geminiKey.trim() !== "") {

@@ -259,6 +259,56 @@ ${spec.codingAgentPrompt}
           </div>
         </div>
 
+        {/* Speech Intake & Transformation Summary (What You Spoke vs Refined Output) */}
+        {transcriptData && (
+          <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EAE2D5] pb-2.5">
+              <div className="flex items-center gap-2">
+                <Mic className="w-4 h-4 text-[#E05315]" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C1917]">
+                  Speech Intake & Transformation Summary
+                </h4>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-mono">
+                <span className="text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                  Confidence: {Math.round(transcriptData.confidence * 100)}%
+                </span>
+                <span className="text-[#78716C] bg-white border border-[#EAE2D5] px-2.5 py-0.5 rounded-full">
+                  Latency: {transcriptData.request_time_ms}ms
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+              <div className="p-3.5 rounded-xl bg-white border border-[#EAE2D5] space-y-1.5">
+                <div className="flex items-center justify-between text-[#78716C] font-mono text-[10px] font-bold uppercase">
+                  <span className="flex items-center gap-1">
+                    <Mic className="w-3 h-3 text-[#E05315]" />
+                    What You Spoke (Raw Speech)
+                  </span>
+                  <span>Verbatim</span>
+                </div>
+                <p className="text-[#57534E] font-mono leading-relaxed whitespace-pre-wrap">
+                  "{transcriptData.text}"
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-orange-50/70 border border-orange-200 space-y-1.5">
+                <div className="flex items-center justify-between text-[#E05315] font-mono text-[10px] font-bold uppercase">
+                  <span className="flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#E05315]" />
+                    Refined Technical Output (Spec Input)
+                  </span>
+                  <span className="text-emerald-700 font-bold">Fillers Cleaned</span>
+                </div>
+                <p className="text-[#1C1917] font-mono font-medium leading-relaxed whitespace-pre-wrap">
+                  "{transcriptData.llm_response}"
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tab Navigation matching repo_clone */}
         <div className="flex items-center gap-6 mt-6 pt-4 border-t border-[#EAE2D5] overflow-x-auto text-sm">
           <button
@@ -527,10 +577,11 @@ ${spec.codingAgentPrompt}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-4 rounded-xl bg-[#FAF8F3] border border-[#EAE2D5] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C]">
-                    Verbatim As Spoken (Raw)
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                    <Mic className="w-3.5 h-3.5 text-[#E05315]" />
+                    What You Spoke (Raw Speech)
                   </span>
-                  <span className="text-[10px] text-[#A8A29E]">Unfiltered</span>
+                  <span className="text-[10px] text-[#A8A29E] font-mono">Verbatim</span>
                 </div>
                 <p className="text-xs text-[#57534E] font-mono leading-relaxed whitespace-pre-wrap">
                   "{transcriptData.text || 'No speech recorded'}"
@@ -539,8 +590,9 @@ ${spec.codingAgentPrompt}
 
               <div className="p-4 rounded-xl bg-orange-50 border border-orange-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#E05315]">
-                    Dictation Clean Rewrite (llm_response)
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#E05315] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#E05315]" />
+                    Refined Technical Output (Spec Input)
                   </span>
                   <span className="text-[10px] text-emerald-700 font-bold">Fillers Cleaned</span>
                 </div>
