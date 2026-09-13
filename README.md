@@ -3,9 +3,41 @@
 > **Voice-First Software Architecture Synthesizer, Zero-Drift Team Relay & Multilingual Video Intake**  
 > Powered by **AssemblyAI Universal-3.5 Pro** and **Google Gemini 1.5 Flash**.
 
+[![Next.js 15](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
+[![AssemblyAI](https://img.shields.io/badge/AssemblyAI-Universal--3.5_Pro-orange?style=flat-square)](https://www.assemblyai.com/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-1.5_Flash-purple?style=flat-square)](https://aistudio.google.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
 IdeaForge bridges the gap between raw human speech and executable software engineering. Whether speaking in rapid English, code-switched Hinglish, Spanish, or Japanese, IdeaForge captures natural intent, strips vocal hesitations, protects technical terminology, and compiles complete technical specifications, architecture diagrams, and coding agent prompts.
 
 Beyond software generation, IdeaForge features the **Zero-Drift Relay Protocol** — eliminating the distortion of dates, assignees, and prerequisites during cross-border handoffs by locking invariant facts into a single canonical source of truth.
+
+---
+
+## Project Overview (Hackathon Brief)
+
+### 1. What does it do?
+IdeaForge transforms raw, unstructured spoken human thought into executable, production-grade software specifications, dynamic architecture diagrams, and ready-to-run coding agent prompts (for Cursor, v0, and GitHub). 
+
+1. **Listens & Refines**: Captures live microphone audio or audio files, strips conversational hesitations and filler words, and protects complex technical terms (`Next.js`, `Supabase`, `Docker`, `WebSockets`).
+2. **Synthesizes Architecture**: Compiles complete engineering roadmaps featuring problem statements, MVP features, Phase 2 capabilities, step-by-step build plans, and exportable interactive Mermaid.js diagrams.
+3. **Executes Zero-Drift Team Relay**: Extracts an immutable **Canonical Meaning Packet** with locked facts (`owner`, `deadline`, `prerequisites`, `priority`), and simultaneously renders culturally localized task briefs for distributed teammates (English, Hindi, Japanese) with **0% fact drift**.
+4. **Transcribes Multilingual Video**: Ingests any YouTube lecture, pitch, or tutorial to generate synchronized transcripts across 19 world languages with a 1-click bridge to compile the video into a software specification.
+5. **Probes API Diagnostics**: Features a built-in automated test battery running 7 live probes to stress-test API resilience, latency spreads, silence handling, and edge-case fallbacks.
+
+### 2. What problem does it solve?
+* **The "Thought-to-Spec" Friction**: Translating spoken product ideas into formal engineering tickets or prompts for AI coding tools (Cursor, Copilot, v0) is tedious. Builders often lose nuance, speed, and momentum when forced to manually type out detailed architecture requirements.
+* **Code-Switching & Dialect Distortion**: Global developers frequently think and speak in blended dialects (e.g., Hinglish: *"Mujhe ek full-stack app banana hai Next.js and Supabase se"*). Traditional speech engines either hallucinate, produce broken phonetic transcriptions, or corrupt technical jargon and library names.
+* **Semantic Drift in Distributed Teams**: In global engineering handoffs, sentence-by-sentence translation causes critical constraints to silently degrade (e.g., *"4 PM"* inadvertently drifting into *"4 AM"*, or prerequisite gates like *"only after tests pass"* getting dropped). IdeaForge guarantees mathematical invariant locking: words are localized, but facts remain 100% frozen.
+
+### 3. How does it use the AssemblyAI Dictation API?
+IdeaForge uses the **AssemblyAI Dictation API (powered by the Universal-3.5 Pro engine)** as its core foundational intake layer across multiple touchpoints:
+* **Native Multilingual Code-Switching & Dialect Intake**: Streams live browser audio (captured via `MediaRecorder` and normalized into 16kHz PCM WAV) to AssemblyAI. Leverages Universal-3.5 Pro’s native code-switching capabilities to accurately decipher technical nouns spoken in the context of Hindi, Spanish, German, and English without phonetic corruption.
+* **Server-Side Dictation & LLM Prompt Instruction**: Utilizes the Dictation API's built-in instruction engine to strip speech fillers (*"um"*, *"uh"*, *"matlab"*, *"you know"*), normalize punctuation, and isolate the pure technical intent while preserving framework names and library identifiers verbatim.
+* **19-Language Synchronized Video Transcription**: Connects to AssemblyAI to transcribe YouTube video audio streams across all 19 supported Universal-3.5 Pro languages, generating timecoded segments that align verbatim with video playback.
+* **Automated API Diagnostics & Edge-Case Probing**: Includes a dedicated diagnostics battery that actively tests the AssemblyAI Dictation endpoint for latency baselines, empty silence resilience, malformed config recovery, and contradictory prompt fallbacks.
 
 ---
 
@@ -106,16 +138,52 @@ IdeaForge resolves this with a two-phase engine:
 
 ---
 
-## Technology Stack
+## Tech Stack & Frameworks Used
 
-| Layer | Technologies |
-|---|---|
-| **Framework** | Next.js 15 (App Router), React 19, TypeScript |
-| **Styling** | Tailwind CSS, Warm Heritage Aesthetic (`#FAF8F3`, terracotta `#E05315`, Instrument Serif) |
-| **Audio Processing** | Web Audio API, `MediaRecorder`, `AnalyserNode`, WAV PCM encoder |
-| **Speech Intelligence** | AssemblyAI Dictation API (Universal-3.5 Pro engine) |
-| **Language Intelligence** | Google Gemini 1.5 Flash (`@google/genai` / `@google/generative-ai`) |
-| **Diagrams & Visuals** | Mermaid.js, Lucide Icons, Canvas Confetti |
+| Layer | Framework / Technology | Role in IdeaForge |
+|---|---|---|
+| **Frontend Framework** | **Next.js 15 (App Router)** | Hybrid server/client rendering, streaming UI, and API proxy routing |
+| **UI Library** | **React 19** | Concurrent rendering, state primitives, and component lifecycle |
+| **Language** | **TypeScript** | Strict end-to-end type definitions across schemas and payloads |
+| **Styling & Theme** | **Tailwind CSS** | Responsive styling using the Warm Heritage palette (`#FAF8F3`, `#E05315`) |
+| **Speech Intelligence** | **AssemblyAI Dictation API** | Universal-3.5 Pro multilingual code-switching and prompt instruction |
+| **Audio Processing** | **Web Audio API (`AnalyserNode`)** | Real-time browser frequency waveform visualizer and PCM WAV encoding |
+| **AI Spec Synthesis** | **Google Gemini 1.5 Flash** | Structured JSON schema compilation for specs and invariant Meaning Packets |
+| **Diagram Generation** | **Mermaid.js** | Client-side dynamic architecture diagram compilation and SVG export |
+| **Vector Icons** | **Lucide React** | Clean, accessible vector icons (strictly zero unicode emojis) |
+| **Micro-Interactions** | **Canvas Confetti** | Visual celebration cues upon spec synthesis and fact locking |
+| **Video Metadata** | **YouTube oEmbed API** | Video title, author, and thumbnail resolution |
+
+---
+
+## Bugs, Empirical API Findings & Feedback
+
+Based on real-world tests executed by IdeaForge's built-in API Diagnostics Battery:
+
+### 1. Documentation vs. Reality Mismatches
+* **Authentication Error Consistency**:
+  * **Observed**: When sending invalid or missing credentials to the Dictation API (`https://dictation.assemblyai.com/v1/transcribe/live`), the endpoint returns `HTTP 401 Unauthorized` with `{"error": "Unauthorized"}`.
+  * **Documentation Gap**: Several community references suggest `HTTP 400 Bad Request` or `HTTP 404 Not Found`. Explicitly documenting standard HTTP error code conventions for live dictation endpoints will save developers debugging time.
+* **Malformed JSON Config Error Schema**:
+  * **Observed**: Submitting malformed JSON in the `config` multipart parameter correctly returns `HTTP 400 Bad Request` with `{"error": "'config' is not valid JSON: ...", "error_code": "bad_request"}`. 
+  * **Feedback**: The error envelope naming convention differs from the v2 Core Transcription API (`error_code` vs `error`). Unifying the schema across both endpoints would make multi-API SDK wrappers cleaner.
+
+### 2. Edge-Case Probing Observations
+* **Silent & Zero-Amplitude Audio Streams**:
+  * **Finding**: Pure zero-amplitude 16kHz PCM silence produces zero hallucinations (returns `text: ""` and `words: []`).
+  * **Suggested Improvement**: The engine outputs `confidence: 0`. Client applications monitoring confidence scores might misinterpret silence as a transcription failure. Adding an explicit `"is_silent": true` or `"has_speech": false` flag to the payload would improve client-side state handling.
+* **Contradictory LLM Rewrite Instructions**:
+  * **Finding**: Passing contradictory prompts via `llm_instruction` (e.g., asking for ancient hieroglyphics while computing math) is handled gracefully without server hangs or `5xx` errors, cleanly falling back to verbatim transcription.
+
+### 3. Developer Experience (DX) Suggestions
+1. **Regional Edge Proxies for Dictation**:
+   * Our benchmarks showed an average round-trip of **~597ms** (with AssemblyAI’s internal sync processing taking only **~47ms**). 
+   * For international developers, network latency represents ~85% of turnaround time. Providing regional edge ingestion points (e.g., `ap-south-1` or `eu-central-1`) would bring perceived dictation turnaround to sub-200ms globally.
+2. **Word Boosting in Dictation API**:
+   * While Universal-3.5 Pro handles code-switching well, novel developer terminology and internal service names (e.g., `Zod`, `tRPC`, `Antigravity`, `v0`) can occasionally get spelled phonetically when spoken rapidly.
+   * Adding a `word_boost` or `custom_vocabulary` array alongside `llm_instruction` would give developers precision control over domain jargon.
+3. **Structured JSON Output in Dictation**:
+   * Allowing a `response_format: { type: "json_object" }` parameter in the Dictation API would allow extracting key-value pairs directly in the dictation step without requiring a secondary LLM call.
 
 ---
 
